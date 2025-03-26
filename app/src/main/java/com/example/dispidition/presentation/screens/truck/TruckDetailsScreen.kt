@@ -11,97 +11,108 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import androidx.navigation.NavHostController
-import com.example.dispidition.data.repo.TruckRepositoryImpl
-import com.example.dispidition.domain.repository.TruckRepository
-import com.example.dispidition.domain.usecase.GetTruckUseCase
+import com.example.dispidition.presentation.viewmodel.truck_details.TruckDetailsViewModel
+import com.example.dispidition.presentation.viewmodel.truck_details.TruckDetailsViewModelFactory
 
 
-class TruckDetailsScreen(val navController: NavHostController) {
+class TruckDetailsScreen(
+    val navController: NavHostController,
+) : ViewModelStore(){
 
-    //TODO by lazy
-    val truckRepository = TruckRepositoryImpl();
-    val getTruckUseCase = GetTruckUseCase(truckRepository);
+    private lateinit var vm: TruckDetailsViewModel
 
     @Composable
-    fun Init(){
-        val truck = getTruckUseCase.execute();
-        Show(truck);
+    fun Init() {
+        vm = ViewModelProvider(
+            this,
+            TruckDetailsViewModelFactory()
+        )[TruckDetailsViewModel::class.java]
+
+        vm.fetchTruck()
+        Show();
     }
 
 
     @Composable
-    fun Show(truck: TruckDetails, modifier: Modifier = Modifier) {
-
-
-        Column(modifier = Modifier
-                .fillMaxSize(),
+    fun Show() {
+        val truck  = vm.truck.observeAsState().value
+        Column(
+            modifier = Modifier
+                .fillMaxSize().padding(top = 150.dp)
         ) {
             Row {
                 Text(text = "Общая информация")
             }
             Column {
-                Card(modifier = Modifier
-                    .padding(15.dp)
-                    .defaultMinSize(minHeight = 110.dp)
-                    .fillMaxWidth(),
+                Card(
+                    modifier = Modifier
+                        .padding(15.dp)
+                        .defaultMinSize(minHeight = 110.dp)
+                        .fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(
                         3.dp
                     ),
                     shape = RoundedCornerShape(10.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)) {
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
                     Column {
                         Row {
                             Text(text = "Марка")
-                            Text(text = truck.mark)
+                            Text(text = truck?.brand ?: "")
                         }
                         Row {
                             Text(text = "Модель")
-                            Text(text = truck.model)
+                            Text(text = truck?.model ?: "")
                         }
                         Row {
                             Text(text = "Номер")
-                            Text(text = truck.roadNumber)
+                            Text(text = truck?.roadNumber ?: "")
                         }
                         Row {
                             Text(text = "Владелец")
-                            Text(text = truck.ownerName)
+                            Text(text = truck?.ownerName ?: "")
                         }
                     }
                 }
                 Row {
                     Text(text = "Информация по поездка")
                 }
-                Card(modifier = Modifier
-                    .padding(15.dp)
-                    .defaultMinSize(minHeight = 110.dp)
-                    .fillMaxWidth(),
+                Card(
+                    modifier = Modifier
+                        .padding(15.dp)
+                        .defaultMinSize(minHeight = 110.dp)
+                        .fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(
                         3.dp
                     ),
                     shape = RoundedCornerShape(10.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)) {
-                    Column {
-                        Row {
-                            Text(text = "Отправление")
-                            Text(text = truck.trip.fromAddress)
-                        }
-                        Row {
-                            Text(text = "Назначение")
-                            Text(text = truck.trip.toAddress)
-                        }
-                        Row {
-                            Text(text = "Водитель")
-                            Text(text = truck.trip.driverName)
-                        }
-                        Row {
-                            Text(text = "Статус")
-                            Text(text = truck.trip.status)
-                        }
-                    }
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
+//                    Column {
+//                        Row {
+//                            Text(text = "Отправление")
+//                            Text(text = truck.fromAddress ?: "")
+//                        }
+//                        Row {
+//                            Text(text = "Назначение")
+//                            Text(text = truck.toAddress ?: "")
+//                        }
+//                        Row {
+//                            Text(text = "Водитель")
+//                            Text(text = truck.driverName ?: "")
+//                        }
+//                        Row {
+//                            Text(text = "Статус")
+//                            Text(text = truck.status ?: "")
+//                        }
+//                    }
                 }
             }
         }
@@ -111,18 +122,4 @@ class TruckDetailsScreen(val navController: NavHostController) {
 }
 
 
-data class TruckDetails(
-    val mark: String,
-    val model: String,
-    val roadNumber: String,
-    val ownerName: String,
-    val trip: TruckDetailsTrip
-)
 
-
-data class TruckDetailsTrip(
-    val fromAddress: String,
-    val toAddress: String,
-    val driverName: String,
-    val status: String,
-)

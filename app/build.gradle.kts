@@ -1,4 +1,8 @@
+import org.gradle.api.JavaVersion.VERSION_1_8
+
 plugins {
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
@@ -6,11 +10,11 @@ plugins {
 
 android {
     namespace = "com.example.dispidition"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.dispidition"
-        minSdk = 27
+        minSdk = 34
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -28,20 +32,23 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = VERSION_1_8
+        targetCompatibility = VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        compose = true
-    }
+
 }
 
 dependencies {
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+    implementation(project(":domain"))
+    implementation(project(":data"))
+    implementation("com.google.dagger:hilt-android-gradle-plugin:2.56.1")
+    implementation("androidx.compose.runtime:runtime-livedata:1.7.8")
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -59,3 +66,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
+kapt {
+    correctErrorTypes = true
+}
+

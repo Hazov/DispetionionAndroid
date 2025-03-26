@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -36,11 +37,12 @@ import com.example.dispidition.presentation.screens.truck.TrucksRegistryScreen
 
 
 class MainActivity : ComponentActivity() {
+
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
+        enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
 
@@ -63,7 +65,7 @@ class MainActivity : ComponentActivity() {
                 Column {
                     NavHost(
                         navController = navController,
-                        startDestination = "persons",
+                        startDestination = "truck",
                         modifier = Modifier.weight(1f)
                     ) {
 
@@ -71,7 +73,7 @@ class MainActivity : ComponentActivity() {
                             trucksRegistryScreen.Show()
                         }
                         composable("truck") {
-                            truckDetailsScreen.Show()
+                            truckDetailsScreen.Init()
                         }
                         composable("createTruck") {
                             createTruckScreen.Show()
