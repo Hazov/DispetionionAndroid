@@ -15,37 +15,33 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStore
 import androidx.navigation.NavHostController
-import com.example.dispidition.presentation.viewmodel.truck_details.TruckDetailsViewModel
-import com.example.dispidition.presentation.viewmodel.truck_details.TruckDetailsViewModelFactory
+
+import androidx.fragment.app.Fragment
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.dispidition.presentation.viewmodel.truck.TruckDetailsViewModel
 
 
 class TruckDetailsScreen(
     val navController: NavHostController,
-) : ViewModelStore(){
-
-    private lateinit var vm: TruckDetailsViewModel
+) : Fragment() {
 
     @Composable
-    fun Init() {
-        vm = ViewModelProvider(
-            this,
-            TruckDetailsViewModelFactory()
-        )[TruckDetailsViewModel::class.java]
-
-        vm.fetchTruck()
-        Show();
+    fun Init(truckId: Long?, vm: TruckDetailsViewModel = hiltViewModel()) {
+        if(truckId != null){
+            vm.fetchTruck(truckId)
+            Show(vm);
+        }
     }
 
 
     @Composable
-    fun Show() {
-        val truck  = vm.truck.observeAsState().value
+    fun Show(vm: TruckDetailsViewModel) {
+        val truck = vm.truck.observeAsState().value
         Column(
             modifier = Modifier
-                .fillMaxSize().padding(top = 150.dp)
+                .fillMaxSize()
+                .padding(top = 150.dp)
         ) {
             Row {
                 Text(text = "Общая информация")

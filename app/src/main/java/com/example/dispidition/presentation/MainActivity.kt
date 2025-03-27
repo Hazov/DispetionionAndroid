@@ -18,12 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.dispidition.R
 import com.example.dispidition.presentation.screens.person.CreatePersonScreen
 import com.example.dispidition.presentation.screens.person.PersonDetailsScreen
@@ -34,18 +35,17 @@ import com.example.dispidition.presentation.screens.trip.TripsRegistryScreen
 import com.example.dispidition.presentation.screens.truck.CreateTruckScreen
 import com.example.dispidition.presentation.screens.truck.TruckDetailsScreen
 import com.example.dispidition.presentation.screens.truck.TrucksRegistryScreen
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
-
             val trucksRegistryScreen = TrucksRegistryScreen(navController)
             val truckDetailsScreen = TruckDetailsScreen(navController)
             val createTruckScreen = CreateTruckScreen(navController)
@@ -65,15 +65,17 @@ class MainActivity : ComponentActivity() {
                 Column {
                     NavHost(
                         navController = navController,
-                        startDestination = "truck",
+                        startDestination = "trucks",
                         modifier = Modifier.weight(1f)
                     ) {
 
                         composable("trucks") {
-                            trucksRegistryScreen.Show()
+                            trucksRegistryScreen.Init()
                         }
-                        composable("truck") {
-                            truckDetailsScreen.Init()
+                        composable("truck/{truckId}", arguments = listOf(navArgument("truckId") { type = NavType.LongType })) {
+                                stackEntry ->
+                            val userId = stackEntry.arguments?.getLong("truckId")
+                            truckDetailsScreen.Init(userId)
                         }
                         composable("createTruck") {
                             createTruckScreen.Show()

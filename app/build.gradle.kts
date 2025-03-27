@@ -44,9 +44,10 @@ android {
 dependencies {
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-
+    implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation(project(":domain"))
     implementation(project(":data"))
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("com.google.dagger:hilt-android-gradle-plugin:2.56.1")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.8")
     implementation(libs.androidx.navigation.compose)

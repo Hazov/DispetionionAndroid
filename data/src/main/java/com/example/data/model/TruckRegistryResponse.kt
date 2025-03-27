@@ -2,8 +2,8 @@ package com.example.data.model
 
 import com.example.domain.model.truck.RegistryTruck
 
-data class TruckRegistryResponse(val brand: String, val model: String, val roadNumber: String){
+data class TruckRegistryResponse(val id: Long, val brand: String, val model: String, val roadNumber: String){
     fun toDomainRegistryTruck(): RegistryTruck{
-        return RegistryTruck(brand = brand, model = model, roadNumber = roadNumber)
+        return RegistryTruck(id, brand, model, roadNumber)
     }
 }

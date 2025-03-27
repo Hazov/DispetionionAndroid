@@ -14,17 +14,6 @@ class TruckRepositoryImpl : TruckRepository {
         val retro = Retrofit.Builder().baseUrl("http://169.254.191.65:8080").addConverterFactory(GsonConverterFactory.create()).build()
         val client = retro.create(ServerTruckStorage::class.java)
         return client.getTruck(id).toDomainTruckDetails()
-
-
-//        return TruckDetails(
-//            "Volvo", "XC90", "X 400 BH 777", "Хазов А.В.",
-//            TruckDetailsTrip(
-//                "Спб",
-//                "Москва",
-//                "Ильшат Сутулов",
-//                "Приехал на разгрузку"
-//            )
-//        )
     }
 
     override suspend fun GetTrucks(): List<RegistryTruck> {
