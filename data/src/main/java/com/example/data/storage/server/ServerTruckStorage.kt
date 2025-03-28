@@ -1,7 +1,7 @@
 package com.example.data.storage.server
 
-import com.example.data.model.TruckDetailsResponse
-import com.example.data.model.TrucksRegistryResponse
+import com.example.data.model.truck.TruckDetailsResponse
+import com.example.data.model.truck.TrucksRegistryResponse
 import com.example.data.storage.TruckStorage
 import retrofit2.http.GET
 import retrofit2.http.Path

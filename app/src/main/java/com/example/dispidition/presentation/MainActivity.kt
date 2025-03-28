@@ -36,12 +36,46 @@ import com.example.dispidition.presentation.screens.truck.CreateTruckScreen
 import com.example.dispidition.presentation.screens.truck.TruckDetailsScreen
 import com.example.dispidition.presentation.screens.truck.TrucksRegistryScreen
 import dagger.hilt.android.AndroidEntryPoint
+import android.Manifest
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
+
+//        @RequiresApi(Build.VERSION_CODES.N)
+//        fun requestPermissions() {
+//            val locationPermissionRequest = registerForActivityResult(
+//                ActivityResultContracts.RequestMultiplePermissions()
+//            ) { permissions ->
+//                when {
+//                    permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+//                        // Precise location access granted.
+//                    }
+//                    else -> {
+//                        // No location access granted.
+//                    }
+//                }
+//            }
+//            locationPermissionRequest.launch(
+//                arrayOf(
+//                    Manifest.permission.ACCESS_FINE_LOCATION,
+//                )
+//            )
+//        }
+//        requestPermissions()
+//
+//
+//        val mlocManager = getSystemService(LOCATION_SERVICE) as LocationManager;
+//        val mlocListener = MyLocationListener();
+//        mlocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0f, mlocListener);
+
+
+
+
+
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -92,10 +126,13 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("persons") {
-                            personsRegistryScreen.Show()
+                            personsRegistryScreen.Init()
                         }
-                        composable("person") {
-                            personDetailsScreen.Show()
+
+                        composable("person/{personId}", arguments = listOf(navArgument("personId") { type = NavType.LongType })) {
+                                stackEntry ->
+                            val userId = stackEntry.arguments?.getLong("personId")
+                            personDetailsScreen.Init(userId)
                         }
                         composable("createPerson") {
                             createPersonScreen.Show()
@@ -109,7 +146,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun BottomNavBar(navController: NavHostController) {
-        NavigationBar(containerColor = Color.Black) {
+        NavigationBar(containerColor = Color.Transparent) {
             NavBarItems.BarItems.forEach { navItem ->
                 NavigationBarItem(
                     selected = true,
@@ -168,5 +205,19 @@ data class BarItem(
     val route: String
 )
 
+
+
+//
+//class MyLocationListener: LocationListener {
+//
+//    var latitude = 0.0;
+//    var longitude=0.0;
+//
+//    override fun onLocationChanged(loc: Location) {
+//        latitude = loc.getLatitude();
+//        longitude = loc.getLongitude();
+//    }
+//
+//}
 
 

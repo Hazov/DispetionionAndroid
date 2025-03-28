@@ -9,17 +9,28 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import java.time.LocalDate
+import com.example.dispidition.presentation.viewmodel.person.PersonDetailsViewModel
 
 class PersonDetailsScreen(val navController: NavHostController) {
-    val person  = PersonDetails("Олег", "Хромоногий", "Вячеславович", LocalDate.now(), "chromonog@mail.ru",
-        PersonDetailsCompany("ООО Жопа"), "Водитель", false)
+
+
     @Composable
-    fun Show() {
+    fun Init(id: Long?, vm: PersonDetailsViewModel = hiltViewModel()) {
+        if(id != null){
+            vm.fetchPerson(id)
+            Show(vm);
+        }
+    }
+
+    @Composable
+    fun Show(vm: PersonDetailsViewModel) {
+        val person = vm.person.observeAsState().value
         Column(Modifier.padding(top = 150.dp)) {
             Card(
                 modifier = Modifier
@@ -33,59 +44,52 @@ class PersonDetailsScreen(val navController: NavHostController) {
                 //Фамилия
                 Row(Modifier.fillMaxWidth()) {
                     Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = "Фамилия");
-                    Text(fontSize = 17.sp, text = person.lastName);
+                    Text(fontSize = 17.sp, text = person?.lastName.orEmpty());
                 }
                 //Имя
                 Row(Modifier.fillMaxWidth()) {
                     Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = "Имя");
-                    Text(fontSize = 17.sp, text = person.firstName);
+                    Text(fontSize = 17.sp, text = person?.firstName.orEmpty());
                 }
                 //Отчество
                 Row(Modifier.fillMaxWidth()) {
                     Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = "Отчество");
-                    Text(fontSize = 17.sp, text = person.middleName);
+                    Text(fontSize = 17.sp, text = person?.middleName.orEmpty());
                 }
                 //Email
                 Row(Modifier.fillMaxWidth()) {
                     Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = "Email")
-                    Text(fontSize = 17.sp, text = person.email);
+                    Text(fontSize = 17.sp, text = person?.email.orEmpty());
 
                 }
                 //Дата регистрации
                 Row(Modifier.fillMaxWidth()) {
                     Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = "Дата регистрации")
-                    Text(fontSize = 17.sp, text = person.registrationDate.toString());
+                    Text(fontSize = 17.sp, text = person?.registrationDate?.toString().orEmpty());
                 }
                 //Компания
                 Row(Modifier.fillMaxWidth()) {
                     Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = "Компания")
-                    Text(fontSize = 17.sp, text = person.company.name);
+                    Text(fontSize = 17.sp, text = person?.company.orEmpty());
                 }
                 //Должность
                 Row(Modifier.fillMaxWidth()) {
                     Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = "Должность")
-                    Text(fontSize = 17.sp, text = person.position);
+                    Text(fontSize = 17.sp, text = person?.position.orEmpty());
                 }
                 //Статус
                 Row(Modifier.fillMaxWidth()) {
                     Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = "Статус")
-                    Text(fontSize = 17.sp, text = person.isFired.toString());
+                    Text(fontSize = 17.sp, text = person?.isFired?.toString().orEmpty());
                 }
             }
         }
 
+
+
+
+
+
+
     }
 }
-
-data class PersonDetails(
-    val firstName: String,
-    val lastName: String,
-    val middleName: String,
-    val registrationDate: LocalDate,
-    val email: String,
-    val company: PersonDetailsCompany,
-    val position: String,
-    val isFired: Boolean
-)
-
-data class PersonDetailsCompany(val name: String)

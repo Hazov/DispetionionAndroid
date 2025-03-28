@@ -1,9 +1,9 @@
-package com.example.data.model
+package com.example.data.model.truck
 
 import com.example.domain.model.truck.TruckDetails
 import com.example.domain.model.truck.TruckDetailsTrip
 
-class TruckDetailsResponse(
+data class TruckDetailsResponse(
     val brand: String,
     val model: String,
     val roadNumber: String,

@@ -16,15 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-
-import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.dispidition.presentation.viewmodel.truck.TruckDetailsViewModel
 
 
 class TruckDetailsScreen(
     val navController: NavHostController,
-) : Fragment() {
+) {
 
     @Composable
     fun Init(truckId: Long?, vm: TruckDetailsViewModel = hiltViewModel()) {
@@ -38,6 +36,7 @@ class TruckDetailsScreen(
     @Composable
     fun Show(vm: TruckDetailsViewModel) {
         val truck = vm.truck.observeAsState().value
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -91,24 +90,7 @@ class TruckDetailsScreen(
                     shape = RoundedCornerShape(10.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White)
                 ) {
-//                    Column {
-//                        Row {
-//                            Text(text = "Отправление")
-//                            Text(text = truck.fromAddress ?: "")
-//                        }
-//                        Row {
-//                            Text(text = "Назначение")
-//                            Text(text = truck.toAddress ?: "")
-//                        }
-//                        Row {
-//                            Text(text = "Водитель")
-//                            Text(text = truck.driverName ?: "")
-//                        }
-//                        Row {
-//                            Text(text = "Статус")
-//                            Text(text = truck.status ?: "")
-//                        }
-//                    }
+
                 }
             }
         }

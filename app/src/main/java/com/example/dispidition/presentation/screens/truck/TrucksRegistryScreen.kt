@@ -53,6 +53,7 @@ class TrucksRegistryScreen(
 
     @Composable
     fun Show(vm: TrucksRegistryViewModel) {
+
         val trucks = vm.trucks.observeAsState().value
         Image(
             painter = painterResource(R.drawable.img_4),
@@ -71,7 +72,7 @@ class TrucksRegistryScreen(
                         .padding(top = 50.dp)
                 ) {
 
-                    items(items = trucks) { truck ->
+                    items(trucks) { truck ->
                         val stateColor = remember {
                             mutableStateOf(Color.Black)
                         }
