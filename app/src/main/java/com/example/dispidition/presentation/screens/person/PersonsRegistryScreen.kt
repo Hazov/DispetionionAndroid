@@ -43,7 +43,6 @@ class PersonsRegistryScreen(val navController: NavHostController) : Fragment() {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 150.dp)
             ) {
                 items(persons) { person ->
                     Card(modifier = Modifier

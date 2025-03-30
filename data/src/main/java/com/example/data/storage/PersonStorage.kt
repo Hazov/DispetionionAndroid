@@ -1,7 +1,7 @@
 package com.example.data.storage
 
-import com.example.data.model.person.PersonDetailsResponse
-import com.example.data.model.person.PersonsRegistryResponse
+import com.example.data.model.person.details.PersonDetailsResponse
+import com.example.data.model.person.registry.PersonsRegistryResponse
 
 
 interface PersonStorage {

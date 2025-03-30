@@ -4,10 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.model.trip.RegistryTrip
-import com.example.domain.model.truck.RegistryTruck
+import com.example.domain.model.trip.registry.RegistryTrip
 import com.example.domain.usecase.trip.GetTripsUseCase
-import com.example.domain.usecase.truck.GetTrucksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

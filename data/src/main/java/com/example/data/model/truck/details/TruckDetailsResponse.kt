@@ -1,4 +1,4 @@
-package com.example.data.model.truck
+package com.example.data.model.truck.details
 
 import com.example.domain.model.truck.TruckDetails
 import com.example.domain.model.truck.TruckDetailsTrip

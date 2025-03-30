@@ -31,7 +31,7 @@ class PersonDetailsScreen(val navController: NavHostController) {
     @Composable
     fun Show(vm: PersonDetailsViewModel) {
         val person = vm.person.observeAsState().value
-        Column(Modifier.padding(top = 150.dp)) {
+        Column {
             Card(
                 modifier = Modifier
                     .padding(15.dp)
@@ -70,7 +70,7 @@ class PersonDetailsScreen(val navController: NavHostController) {
                 //Компания
                 Row(Modifier.fillMaxWidth()) {
                     Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = "Компания")
-                    Text(fontSize = 17.sp, text = person?.company.orEmpty());
+                    Text(fontSize = 17.sp, text = person?.company?.name.orEmpty());
                 }
                 //Должность
                 Row(Modifier.fillMaxWidth()) {

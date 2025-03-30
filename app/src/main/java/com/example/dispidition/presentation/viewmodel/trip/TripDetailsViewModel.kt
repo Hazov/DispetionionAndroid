@@ -4,10 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.model.trip.TripDetails
-import com.example.domain.model.truck.TruckDetails
+import com.example.domain.model.trip.details.TripDetails
 import com.example.domain.usecase.trip.GetTripUseCase
-import com.example.domain.usecase.truck.GetTruckUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,7 +17,7 @@ class TripDetailsViewModel @Inject constructor(private val getTripUseCase: GetTr
     private var _trip = MutableLiveData<TripDetails>()
     var trip: LiveData<TripDetails> = _trip
 
-    fun fetchTruck(id: Long) {
+    fun fetchTrip(id: Long) {
         viewModelScope.launch {
             _trip.value = getTripUseCase.execute(id)
         }

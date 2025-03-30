@@ -41,7 +41,7 @@ import com.example.dispidition.presentation.viewmodel.truck.TrucksRegistryViewMo
 
 class TrucksRegistryScreen(
     val navController: NavHostController
-) : Fragment() {
+) {
 
 
     @Composable
@@ -69,7 +69,6 @@ class TrucksRegistryScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 50.dp)
                 ) {
 
                     items(trucks) { truck ->
@@ -160,11 +159,6 @@ class TrucksRegistryScreen(
                         }
                     }
 
-                }
-                Row(Modifier.padding(bottom = 50.dp)) {
-                    IconButton(onClick = {}) {
-                        Icon(painter = painterResource(R.drawable.addicon), "Добавить")
-                    }
                 }
 
             }

@@ -1,7 +1,7 @@
 package com.example.data.storage
 
-import com.example.data.model.trip.TripDetailsResponse
-import com.example.data.model.trip.TripsRegistryResponse
+import com.example.data.model.trip.details.TripDetailsResponse
+import com.example.data.model.trip.registry.TripsRegistryResponse
 
 
 interface TripStorage {

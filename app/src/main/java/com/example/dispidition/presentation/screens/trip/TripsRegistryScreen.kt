@@ -14,6 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,113 +22,77 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.Fragment
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.dispidition.presentation.viewmodel.trip.TripRegistryViewModel
+import com.example.dispidition.presentation.viewmodel.truck.TrucksRegistryViewModel
 
 class TripsRegistryScreen(val navController: NavHostController) {
+
     @Composable
-    fun Show(modifier: Modifier = Modifier) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 50.dp)
-        ) {
-            items(
-                listOf(
-                    Trip(
-                        "Спб",
-                        "Москва",
-                        "ИП Андрей Иванович Петров",
-                        "Кушпат Садыров",
-                        150000,
-                        "В пути",
-                        "Dispedition",
-                        "К 888 АВ 777"
-                    ),
-                    Trip(
-                        "Москва",
-                        "Воронеж",
-                        "ИП Иван Логинов Пароль",
-                        "Кушпат Садыров",
-                        1000000,
-                        "Завершена",
-                        "Dispedition",
-                        "К 888 АВ 777"
-                    ),
-                    Trip(
-                        "Владивосток",
-                        "Алма-Аты",
-                        "ОАО Молочный завод",
-                        "Сидоров Олег",
-                        55000,
-                        "Завершена",
-                        "Dispedition",
-                        "К 434 АВ 777"
-                    ),
-                )
-            ) { trip ->
-                val stateColor = remember {
-                    mutableStateOf(Color.Black)
-                }
-                if (trip.status.equals("Активна")) {
-                    stateColor.value = Color(0xff57b44e);
-                } else {
-                    stateColor.value = Color(0xffb2b2b2);
+    fun Init(vm: TripRegistryViewModel = hiltViewModel()) {
+        vm.fetchTrucks()
+        Show(vm);
+    }
 
-                }
-                Card(modifier = Modifier
-                    .padding(15.dp)
-                    .defaultMinSize(minHeight = 110.dp)
-                    .fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(
-                        15.dp
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    onClick = {navController.navigate("trip")}) {
-                    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly) {
-                        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Row {
-                                Text(text = trip.customer, fontSize = 17.sp)
+    @Composable
+    fun Show(vm: TripRegistryViewModel) {
+
+        val trips = vm.trips.observeAsState().value
+        if(trips != null){
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                items(trips) { trip ->
+                    val stateColor = remember {
+                        mutableStateOf(Color.Black)
+                    }
+                    if (trip.equals("Активна")) {
+                        stateColor.value = Color(0xff57b44e);
+                    } else {
+                        stateColor.value = Color(0xffb2b2b2);
+
+                    }
+                    Card(modifier = Modifier
+                        .padding(15.dp)
+                        .defaultMinSize(minHeight = 110.dp)
+                        .fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(
+                            15.dp
+                        ),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        onClick = {navController.navigate("trip/${trip.id}")}) {
+                        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly) {
+                            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                                Row {
+                                    Text(text = trip.sourceAddress?.city.orEmpty(), fontSize = 17.sp)
+                                }
+                                Row {
+                                    Text(text = trip.destinationAddress?.city.orEmpty(), fontSize = 17.sp)
+                                }
                             }
-                            Row {
-                                Text(text = trip.status, fontSize = 17.sp)
-                            }
-                        }
-                        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Row {
-                                Text(text = "Грузоперевозчик: " + trip.transporterCompanyName, fontSize = 12.sp)
+                            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                                Row {
+                                    Text(text = "Грузоперевозчик: " + trip.truck?.roadNumber.orEmpty(), fontSize = 12.sp)
+
+                                }
+                                Row {
+                                    Text(text = "(" + trip + "  " + trip + ")", fontSize = 9.sp)
+                                }
 
                             }
-                            Row {
-                                Text(text = "(" + trip.driverName + "  " + trip.roadNumber + ")", fontSize = 9.sp)
-                            }
 
-                        }
-                        Row(verticalAlignment = Alignment.Bottom) {
-                            Row {
-                                Text(text = trip.fromAddress + " - " + trip.toAddress, fontSize = 16.sp)
-                            }
-                            Row {
-                                Text(text = trip.cost.toString() + "р", fontSize = 16.sp);
-                            }
 
                         }
                     }
+
                 }
 
             }
-
         }
+
     }
 }
-
-data class Trip(
-    val fromAddress: String,
-    val toAddress: String,
-    val customer: String,
-    val driverName: String,
-    val cost: Number,
-    val status: String,
-    val transporterCompanyName: String,
-    val roadNumber: String
-)

@@ -28,7 +28,6 @@ class CreateTripScreen(val navController: NavHostController) {
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(top = 150.dp)
         ) {
             Row {
                 Text(text = "Создание поездки")

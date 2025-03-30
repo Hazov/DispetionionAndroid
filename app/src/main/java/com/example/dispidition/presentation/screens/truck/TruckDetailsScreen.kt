@@ -40,7 +40,6 @@ class TruckDetailsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 150.dp)
         ) {
             Row {
                 Text(text = "Общая информация")
@@ -77,7 +76,7 @@ class TruckDetailsScreen(
                     }
                 }
                 Row {
-                    Text(text = "Информация по поездка")
+                    Text(text = "Информация по поездке")
                 }
                 Card(
                     modifier = Modifier

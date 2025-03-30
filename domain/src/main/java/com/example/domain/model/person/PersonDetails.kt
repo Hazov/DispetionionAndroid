@@ -7,7 +7,7 @@ data class PersonDetails(
     val middleName: String?,
     val email: String?,
     val registrationDate: String?,
-    val company: String?,
+    val company: PersonDetailsCompany?,
     val position: String?,
     val isFired: Boolean?
 

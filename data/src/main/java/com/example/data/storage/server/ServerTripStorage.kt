@@ -1,7 +1,7 @@
 package com.example.data.storage.server
 
-import com.example.data.model.trip.TripDetailsResponse
-import com.example.data.model.trip.TripsRegistryResponse
+import com.example.data.model.trip.details.TripDetailsResponse
+import com.example.data.model.trip.registry.TripsRegistryResponse
 import com.example.data.storage.TripStorage
 import retrofit2.http.GET
 import retrofit2.http.Path

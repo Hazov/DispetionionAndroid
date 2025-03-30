@@ -1,4 +1,4 @@
-package com.example.data.model.truck
+package com.example.data.model.truck.registry
 
 import com.example.domain.model.truck.RegistryTruck
 

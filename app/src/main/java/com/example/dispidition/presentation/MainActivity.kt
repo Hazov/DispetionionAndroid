@@ -37,11 +37,12 @@ import com.example.dispidition.presentation.screens.truck.TruckDetailsScreen
 import com.example.dispidition.presentation.screens.truck.TrucksRegistryScreen
 import dagger.hilt.android.AndroidEntryPoint
 import android.Manifest
+import androidx.compose.foundation.layout.padding
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
 //        @RequiresApi(Build.VERSION_CODES.N)
@@ -94,9 +95,9 @@ class MainActivity : ComponentActivity() {
 
             Scaffold(Modifier.fillMaxSize(),
                 bottomBar = {BottomNavBar(navController)},
-                topBar = {BottomNavBar(navController)}) {
+                topBar = {BottomNavBar(navController)}) { padding ->
 
-                Column {
+                Column(Modifier.padding(padding)) {
                     NavHost(
                         navController = navController,
                         startDestination = "trucks",
@@ -116,11 +117,15 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("trips") {
-                            tripsRegistryScreen.Show()
+                            tripsRegistryScreen.Init()
                         }
-                        composable("trip") {
-                            tripDetailsScreen.Show()
+
+                        composable("trip/{tripId}", arguments = listOf(navArgument("tripId") { type = NavType.LongType })) {
+                                stackEntry ->
+                            val tripId = stackEntry.arguments?.getLong("tripId")
+                            tripDetailsScreen.Init(tripId)
                         }
+
                         composable("createTrip") {
                             createTripScreen.Show()
                         }
@@ -153,7 +158,6 @@ class MainActivity : ComponentActivity() {
                     onClick = {
                         navController.navigate(navItem.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
                             }
                             launchSingleTop = true
                             restoreState = true

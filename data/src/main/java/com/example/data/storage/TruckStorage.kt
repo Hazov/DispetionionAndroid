@@ -1,7 +1,7 @@
 package com.example.data.storage
 
-import com.example.data.model.truck.TruckDetailsResponse
-import com.example.data.model.truck.TrucksRegistryResponse
+import com.example.data.model.truck.details.TruckDetailsResponse
+import com.example.data.model.truck.registry.TrucksRegistryResponse
 
 interface TruckStorage {
      suspend fun getTruck(id: Long) : TruckDetailsResponse;
