@@ -1,7 +1,7 @@
 package com.example.data.model.truck.details
 
-import com.example.domain.model.truck.TruckDetails
-import com.example.domain.model.truck.TruckDetailsTrip
+import com.example.domain.model.truck.details.TruckDetails
+import com.example.domain.model.truck.details.TruckDetailsTrip
 
 data class TruckDetailsResponse(
     val brand: String,

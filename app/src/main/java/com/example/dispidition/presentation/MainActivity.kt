@@ -1,12 +1,13 @@
 package com.example.dispidition.presentation
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -16,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -36,8 +38,6 @@ import com.example.dispidition.presentation.screens.truck.CreateTruckScreen
 import com.example.dispidition.presentation.screens.truck.TruckDetailsScreen
 import com.example.dispidition.presentation.screens.truck.TrucksRegistryScreen
 import dagger.hilt.android.AndroidEntryPoint
-import android.Manifest
-import androidx.compose.foundation.layout.padding
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -96,6 +96,14 @@ class MainActivity : ComponentActivity() {
             Scaffold(Modifier.fillMaxSize(),
                 bottomBar = {BottomNavBar(navController)},
                 topBar = {BottomNavBar(navController)}) { padding ->
+                Image(
+                    painter = painterResource(R.drawable.img_4),
+                    "bg",
+                    Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+
+
+                )
 
                 Column(Modifier.padding(padding)) {
                     NavHost(
@@ -113,7 +121,7 @@ class MainActivity : ComponentActivity() {
                             truckDetailsScreen.Init(userId)
                         }
                         composable("createTruck") {
-                            createTruckScreen.Show()
+                            createTruckScreen.Init()
                         }
 
                         composable("trips") {
@@ -127,7 +135,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("createTrip") {
-                            createTripScreen.Show()
+                            createTripScreen.Init()
                         }
 
                         composable("persons") {
@@ -140,7 +148,7 @@ class MainActivity : ComponentActivity() {
                             personDetailsScreen.Init(userId)
                         }
                         composable("createPerson") {
-                            createPersonScreen.Show()
+                            createPersonScreen.Init()
                         }
                     }
                 }

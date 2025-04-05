@@ -5,6 +5,6 @@ import com.example.domain.repository.PersonRepository
 
 class GetPersonsUseCase(private val personRepository: PersonRepository) {
     suspend fun execute(): List<RegistryPerson> {
-        return personRepository.GetPersons()
+        return personRepository.getPersons()
     }
 }

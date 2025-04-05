@@ -1,4 +1,4 @@
-package com.example.domain.model.truck
+package com.example.domain.model.truck.details
 
 data class TruckDetails(
     val brand: String?,

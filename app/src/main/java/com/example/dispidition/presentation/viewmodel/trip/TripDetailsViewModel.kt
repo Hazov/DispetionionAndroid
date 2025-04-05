@@ -14,6 +14,7 @@ import javax.inject.Inject
 class TripDetailsViewModel @Inject constructor(private val getTripUseCase: GetTripUseCase) :
     ViewModel() {
 
+
     private var _trip = MutableLiveData<TripDetails>()
     var trip: LiveData<TripDetails> = _trip
 
@@ -24,3 +25,6 @@ class TripDetailsViewModel @Inject constructor(private val getTripUseCase: GetTr
     }
 
 }
+
+
+

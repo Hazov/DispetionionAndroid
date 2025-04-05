@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,6 +65,7 @@ class TripDetailsScreen(val navController: NavHostController) {
     @Composable
     fun Show(vm: TripDetailsViewModel) {
         val trip = vm.trip.observeAsState().value
+
 
         if (trip != null) {
             val sortedPoints = trip.cargos.flatMap { cargo -> cargo.points }
@@ -120,6 +123,7 @@ class TripDetailsScreen(val navController: NavHostController) {
 
     @Composable
     fun PointOfCargo(trip: TripDetails) {
+        val uriHandler = LocalUriHandler.current
         Row {
             Text("Информация о грузах")
         }
@@ -147,16 +151,28 @@ class TripDetailsScreen(val navController: NavHostController) {
                                 HorizontalDivider(Modifier.padding(vertical = 15.dp))
                                 Column {
                                     RowInfo("Адрес") {
-                                        Column {
-                                            Text(point.address.city)
-                                            Text(point.address.street)
-                                            Text(point.address.house)
+                                        Row {
+                                            Column {
+                                                Text(point.address.city)
+                                                Text(point.address.street)
+                                                Text(point.address.house)
+                                                Row {
+                                                    Button(onClick = {
+                                                        var address = "${point.address.city} ${point.address.street} ${point.address.house}"
+                                                        address = address.replace(" ", "%20")
+                                                        uriHandler.openUri("https://yandex.ru/maps/2/saint-petersburg/search/${address}")
+                                                    }) {
+                                                        Text("На карте")
+                                                    }
+                                                }
+
+                                            }
                                         }
                                     }
                                     RowInfo("Тип") {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Text(if(point.type.equals("UNLOAD")) "Разгрузка" else "Загрузка")
-                                            Circle(6, if(point.type.equals("UNLOAD")) Color(0x2a711f) else Color.Red)
+                                            Circle(6, if(point.type.equals("UNLOAD")) Color.Green else Color.Red)
                                         }
                                     }
                                 }
@@ -234,8 +250,6 @@ class TripDetailsScreen(val navController: NavHostController) {
                     strokeWidth = 5.0f,
                 )
             }
-
-
         }
     }
 
