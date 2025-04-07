@@ -4,6 +4,7 @@ import com.example.domain.model.trip.forDriver.tripRoute.TripRoutePoint
 import java.util.Date
 
 data class TripRoutePointR(
+    val id: Long,
     val address: TripRoutePointAddressR,
     val type: String,
     val serialNumber: Int,
@@ -16,6 +17,7 @@ data class TripRoutePointR(
 ) {
     fun toDomainTripRoutePoint():TripRoutePoint{
         return TripRoutePoint(
+            id,
             address.toDomainTripRoutePointAddress(),
             type,
             serialNumber,

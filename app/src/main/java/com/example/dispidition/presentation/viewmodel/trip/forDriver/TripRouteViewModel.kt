@@ -17,8 +17,8 @@ class TripRouteViewModel @Inject constructor(
 
     var tripRoute: TripRoute? = null;
 
-    var isExtendPrevList = false
-    var isExtendFutureList = false
+    var isExpandPrevList = false
+    var isExpandFutureList = false
 
     var prevTripPoints = ArrayList<TripRoutePoint>()
     var currentTripPoint: TripRoutePoint? = null
@@ -49,7 +49,7 @@ class TripRouteViewModel @Inject constructor(
     }
 
     fun changeStatus(){
-        changePointStatusUseCase.execute(currentTripPoint.id)
+        changePointStatusUseCase.execute(currentTripPoint!!.id)
     }
 
 }

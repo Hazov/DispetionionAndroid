@@ -36,8 +36,6 @@ import com.example.dispidition.R
 import com.example.domain.model.trip.details.TripDetails
 import com.example.domain.model.trip.details.TripDetailsCargoPoint
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoutePoint
-import com.example.domain.model.trip.forDriver.tripRoute.TripRoutePointAddress
-import java.util.Date
 
 class TripRouteScreen(val navController: NavHostController) {
 
@@ -49,35 +47,44 @@ class TripRouteScreen(val navController: NavHostController) {
 
     @Composable
     fun Show(vm: TripRouteViewModel) {
-        LazyColumn {
-            item() {
+        val currentPoint = vm.currentTripPoint
+        if (currentPoint != null) {
+            LazyColumn {
+                item() {
 //                PointsLine()
-                if(vm.prevTripPoints.isNotEmpty()){
-                    ExtendableList(vm, false)
-                }
-                TripPointCard(vm, vm.currentTripPoint, "Текущая")
-                if(vm.futureTripPoints.isNotEmpty()){
-                    ExtendableList(vm, true)
+                    if (vm.prevTripPoints.isNotEmpty()) {
+                        ExtendableList(vm, false)
+                    }
+                    TripPointCard(vm, currentPoint, "Текущая")
+                    if (vm.futureTripPoints.isNotEmpty()) {
+                        ExtendableList(vm, true)
+                    }
                 }
             }
         }
+
     }
 
     @Composable
     fun ExtendableList(vm: TripRouteViewModel, isFuture: Boolean) {
+        var isExpand = if (!isFuture) vm.isExpandPrevList else vm.isExpandFutureList
         Row {
-            Text(if(!isFuture) "Пройденные точки" else "Будущие точки")
-            Icon(painter = painterResource(R.drawable.unloadicon), "Раскрыть")
+            Text(if (!isFuture) "Пройденные точки" else "Будущие точки")
+            Icon(
+                painter = painterResource(if (!isExpand) R.drawable.expand else R.drawable.collapse),
+                "Открыть/Скрыть"
+            )
         }
-        if (if(!isFuture) vm.isExtendPrevList else vm.isExtendFutureList) {
+        if (isExpand) {
             Column {
-                for (point in if(!isFuture) vm.prevTripPoints else vm.futureTripPoints) {
-                    TripPointCard(vm, point, if(!isFuture) "пройдена" else "в будущем")
+                for (point in if (!isFuture) vm.prevTripPoints else vm.futureTripPoints) {
+                    TripPointCard(vm, point, if (!isFuture) "пройдена" else "в будущем")
                 }
 
             }
         }
     }
+
 
     @Composable
     fun TripPointCard(vm: TripRouteViewModel, point: TripRoutePoint, pointStatus: String) {
@@ -114,98 +121,99 @@ class TripRouteScreen(val navController: NavHostController) {
 
                 Row {
                     Text(text = "Показать на карте")
-                    Icon(painterResource(R.drawable.unloadicon), "Карта")
+                    Icon(painterResource(R.drawable.gpsreporticon), "Карта")
                 }
 
             }
         }
-        if(point == vm.currentTripPoint){
+        if (point == vm.currentTripPoint) {
             var action = ""
-            if(point.type == "UNLOAD"){
-                action = if(point.arrivalForUnloadingDate == null)
-                     "Приехал на разгрузку"
-                 else
+            if (point.type == "UNLOAD") {
+                action = if (point.arrivalForUnloadingDate == null)
+                    "Приехал на разгрузку"
+                else
                     "Разгрузился"
             } else {
-                action = if(point.arrivalForUploadingDate == null)
+                action = if (point.arrivalForUploadingDate == null)
                     "Приехал на загрузку"
                 else
                     "загрузился"
             }
 
-            Button(onClick = {vm.changeStatus}) {
+            Button(onClick = { vm.changeStatus() }) {
                 Text(text = action)
             }
         }
     }
-}
 
 
-@Composable
-fun PointsLine(trip: TripDetails, points: List<TripDetailsCargoPoint>) {
-    Box(
-        Modifier
-            .horizontalScroll(rememberScrollState())
-            .width((points.size * 120).dp)
-            .padding(vertical = 30.dp)
-    ) {
-
-        Row(
-            modifier = Modifier
-                .zIndex(9000f)
-                .offset(x = 40.dp)
-        ) {
-            trip.cargos.flatMap { cargo -> cargo.points }
-                .sortedBy { point -> point.serialNumber }.forEach({ point ->
-                    val backgroundColor = when (point.isCompleted) {
-                        true -> Color(0xff2a711f)
-                        false -> Color(0xff24ccc6)
-                    }
-                    val iconLoadTypeColor =
-                        if (point.type.equals("UPLOAD")) Color(0xffc56d27) else Color(0xff196646)
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        IconButton(
-                            modifier = Modifier
-                                .padding(horizontal = 25.dp)
-                                .background(color = backgroundColor, shape = CircleShape)
-                                .size(50.dp),
-                            onClick = {}
-                        ) {
-
-                            Icon(
-                                modifier = Modifier.fillMaxSize(0.5f),
-                                tint = iconLoadTypeColor,
-                                painter = painterResource(
-                                    if (point.type.equals("UPLOAD")) R.drawable.uploadicon
-                                    else R.drawable.unloadicon
-                                ), contentDescription = "Загрузка"
-                            )
-                        }
-                        Text(textAlign = TextAlign.Center, text = point.address.city)
-                    }
-
-
-                })
-
-        }
-
-        Canvas(
+    @Composable
+    fun PointsLine(trip: TripDetails, points: List<TripDetailsCargoPoint>) {
+        Box(
             Modifier
+                .horizontalScroll(rememberScrollState())
                 .width((points.size * 120).dp)
-                .height(50.dp)
-                .background(Color.Transparent)
+                .padding(vertical = 30.dp)
         ) {
 
-            val height = size.height
-            val width = size.width
-            drawLine(
-                start = Offset(x = 0f, y = height / 2),
-                end = Offset(x = width, y = height / 2),
-                color = Color.DarkGray,
-                strokeWidth = 5.0f,
-            )
+            Row(
+                modifier = Modifier
+                    .zIndex(9000f)
+                    .offset(x = 40.dp)
+            ) {
+                trip.cargos.flatMap { cargo -> cargo.points }
+                    .sortedBy { point -> point.serialNumber }.forEach({ point ->
+                        val backgroundColor = when (point.isCompleted) {
+                            true -> Color(0xff2a711f)
+                            false -> Color(0xff24ccc6)
+                        }
+                        val iconLoadTypeColor =
+                            if (point.type.equals("UPLOAD")) Color(0xffc56d27) else Color(0xff196646)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            IconButton(
+                                modifier = Modifier
+                                    .padding(horizontal = 25.dp)
+                                    .background(color = backgroundColor, shape = CircleShape)
+                                    .size(50.dp),
+                                onClick = {}
+                            ) {
+
+                                Icon(
+                                    modifier = Modifier.fillMaxSize(0.5f),
+                                    tint = iconLoadTypeColor,
+                                    painter = painterResource(
+                                        if (point.type.equals("UPLOAD")) R.drawable.uploadicon
+                                        else R.drawable.unloadicon
+                                    ), contentDescription = "Загрузка"
+                                )
+                            }
+                            Text(textAlign = TextAlign.Center, text = point.address.city)
+                        }
+
+
+                    })
+
+            }
+
+            Canvas(
+                Modifier
+                    .width((points.size * 120).dp)
+                    .height(50.dp)
+                    .background(Color.Transparent)
+            ) {
+
+                val height = size.height
+                val width = size.width
+                drawLine(
+                    start = Offset(x = 0f, y = height / 2),
+                    end = Offset(x = width, y = height / 2),
+                    color = Color.DarkGray,
+                    strokeWidth = 5.0f,
+                )
+            }
+
+
         }
-
-
     }
 }
+

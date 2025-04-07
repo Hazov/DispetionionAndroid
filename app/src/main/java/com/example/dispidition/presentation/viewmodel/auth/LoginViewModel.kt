@@ -12,6 +12,6 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
     var password = mutableStateOf("")
 
     fun login(){
-        loginUseCase.execute(login.value, password.value)
+//        loginUseCase.execute(login.value, password.value)
     }
 }

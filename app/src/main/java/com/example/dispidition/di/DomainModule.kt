@@ -15,6 +15,7 @@ import com.example.domain.usecase.trip.forDriver.GetTripRouteUseCase
 import com.example.domain.usecase.truck.CreateTruckUseCase
 import com.example.domain.usecase.truck.GetTruckUseCase
 import com.example.domain.usecase.truck.GetTrucksUseCase
+import com.example.domain.usecase.trip.forDriver.ChangePointStatusUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -71,10 +72,7 @@ class DomainModule {
     }
 
 
-    
-    
-    
-    
+
     //person
     @Provides
     fun providesGetPersonsUseCase(personRepository: PersonRepository): GetPersonsUseCase {
