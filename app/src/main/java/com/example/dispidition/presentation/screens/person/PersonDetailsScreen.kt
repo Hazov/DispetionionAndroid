@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.dispidition.presentation.viewmodel.person.PersonDetailsViewModel
+import com.example.domain.model.person.details.PersonDetailsCompany
 
 class PersonDetailsScreen(val navController: NavHostController) {
 

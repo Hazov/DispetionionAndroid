@@ -11,6 +11,8 @@ import com.example.domain.usecase.person.GetPersonsUseCase
 import com.example.domain.usecase.trip.CreateTripUseCase
 import com.example.domain.usecase.trip.GetTripUseCase
 import com.example.domain.usecase.trip.GetTripsUseCase
+import com.example.domain.usecase.trip.autocomplete.GetDriversAutoCompleteUseCase
+import com.example.domain.usecase.trip.autocomplete.GetTrucksAutoCompleteUseCase
 import com.example.domain.usecase.trip.forDriver.GetTripRouteUseCase
 import com.example.domain.usecase.truck.CreateTruckUseCase
 import com.example.domain.usecase.truck.GetTruckUseCase
@@ -41,6 +43,12 @@ class DomainModule {
     fun providesCreateTruckUseCase(truckRepository: TruckRepository): CreateTruckUseCase {
         return CreateTruckUseCase(truckRepository)
     }
+
+    @Provides
+    fun provideGetTrucksAutoCompleteUseCase(truckRepository: TruckRepository): GetTrucksAutoCompleteUseCase {
+        return GetTrucksAutoCompleteUseCase(truckRepository)
+    }
+
     
     
     
@@ -89,11 +97,17 @@ class DomainModule {
         return CreatePersonUseCase(personRepository)
     }
 
+    @Provides
+    fun provideGetDriversAutoCompleteUseCase(personRepository: PersonRepository): GetDriversAutoCompleteUseCase {
+        return GetDriversAutoCompleteUseCase(personRepository)
+    }
+
     //auth
     @Provides
     fun provideLoginUseCase(@ApplicationContext context:Context, personRepository: PersonRepository): LoginUseCase {
         return LoginUseCase(context, personRepository)
     }
+
 
     
 }

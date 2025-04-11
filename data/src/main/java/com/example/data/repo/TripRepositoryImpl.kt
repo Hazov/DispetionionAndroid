@@ -22,7 +22,7 @@ class TripRepositoryImpl(private val tripStorage: TripStorage) : TripRepository 
     }
 
     override suspend fun createTrip(newTrip: NewTrip): CreateTripResponse{
-        var dataResponse = tripStorage.createTrip(CreateTripRequest(newTrip.brand, newTrip.model, newTrip.roadNumber))
+        var dataResponse = tripStorage.createTrip(CreateTripRequest(newTrip.cargos, newTrip.truckId, newTrip.driverId))
         return dataResponse.toDomainCreateTripResponse()
     }
 

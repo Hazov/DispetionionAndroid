@@ -1,5 +1,6 @@
 package com.example.domain.repository
 
+import com.example.domain.model.truck.autocomplete.TruckForAutoComplete
 import com.example.domain.model.truck.create.CreateTruckResponse
 import com.example.domain.model.truck.create.NewTruck
 import com.example.domain.model.truck.registry.RegistryTruck
@@ -9,5 +10,6 @@ interface TruckRepository {
     suspend fun getTruck(id: Long): TruckDetails;
     suspend fun getTrucks(): List<RegistryTruck>;
     suspend fun createTruck(newTruck: NewTruck): CreateTruckResponse;
+    suspend fun getTrucksForAutoComplete(): List<TruckForAutoComplete>
 
 }

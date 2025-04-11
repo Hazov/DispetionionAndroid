@@ -28,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.dispidition.R
+import com.example.dispidition.presentation.screens.auth.LoginScreen
 import com.example.dispidition.presentation.screens.person.CreatePersonScreen
 import com.example.dispidition.presentation.screens.person.PersonDetailsScreen
 import com.example.dispidition.presentation.screens.person.PersonsRegistryScreen
@@ -93,6 +94,8 @@ class MainActivity : ComponentActivity() {
             val personDetailsScreen = PersonDetailsScreen(navController)
             val createPersonScreen = CreatePersonScreen(navController)
 
+            val loginScreen = LoginScreen(navController)
+
             Scaffold(Modifier.fillMaxSize(),
                 bottomBar = {BottomNavBar(navController)},
                 topBar = {BottomNavBar(navController)}) { padding ->
@@ -108,7 +111,7 @@ class MainActivity : ComponentActivity() {
                 Column(Modifier.padding(padding)) {
                     NavHost(
                         navController = navController,
-                        startDestination = "trucks",
+                        startDestination = "login",
                         modifier = Modifier.weight(1f)
                     ) {
 
@@ -150,6 +153,10 @@ class MainActivity : ComponentActivity() {
                         composable("createPerson") {
                             createPersonScreen.Init()
                         }
+                        composable("login") {
+                            loginScreen.Init()
+                        }
+
                     }
                 }
             }

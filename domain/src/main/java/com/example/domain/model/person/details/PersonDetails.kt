@@ -1,4 +1,4 @@
-package com.example.domain.model.person
+package com.example.domain.model.person.details
 
 data class PersonDetails(
     val id:Long?,

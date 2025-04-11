@@ -1,5 +1,7 @@
 package com.example.data.storage
 
+import com.example.data.model.person.autocomplete.DriversForAutoCompleteResponse
+import com.example.data.model.truck.autocomplete.TrucksForAutoCompleteResponse
 import com.example.data.model.truck.create.CreateTruckRequest
 import com.example.data.model.truck.create.CreateTruckResponse
 import com.example.data.model.truck.details.TruckDetailsResponse
@@ -9,5 +11,7 @@ interface TruckStorage {
      suspend fun getTruck(id: Long) : TruckDetailsResponse
      suspend fun getTrucks(): TrucksRegistryResponse
      suspend fun createTruck(request: CreateTruckRequest): CreateTruckResponse
+     suspend fun getTrucksForAutoComplete(): TrucksForAutoCompleteResponse
+
 
 }

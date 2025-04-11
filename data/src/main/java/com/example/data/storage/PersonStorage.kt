@@ -1,5 +1,6 @@
 package com.example.data.storage
 
+import com.example.data.model.person.autocomplete.DriversForAutoCompleteResponse
 import com.example.data.model.person.create.CreatePersonRequest
 import com.example.data.model.person.create.CreatePersonResponse
 import com.example.data.model.person.details.PersonDetailsResponse
@@ -13,4 +14,5 @@ interface PersonStorage {
     suspend fun getPersons(): PersonsRegistryResponse
     suspend fun createPerson(request:CreatePersonRequest): CreatePersonResponse
     suspend fun login(request: LoginRequest): LoginResponse
+    suspend fun getDriversForAutoComplete(): DriversForAutoCompleteResponse
 }

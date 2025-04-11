@@ -2,7 +2,6 @@ package com.example.dispidition.presentation.screens.trip
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,46 +16,45 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.dispidition.R
-import com.example.dispidition.presentation.viewmodel.trip.Cargo
-import com.example.dispidition.presentation.viewmodel.trip.CreateTripViewModel
-import com.example.dispidition.presentation.viewmodel.trip.Point
+import com.example.dispidition.presentation.viewmodel.common.autocomplete.AutoCompletable
+import com.example.dispidition.presentation.viewmodel.common.autocomplete.AutoComplete
+import com.example.dispidition.presentation.viewmodel.common.autocomplete.AutoCompleteModel
+import com.example.dispidition.presentation.viewmodel.common.autocomplete.Instantiatable
+import com.example.dispidition.presentation.viewmodel.trip.create_trip.CreateTripCargoView
+import com.example.dispidition.presentation.viewmodel.trip.create_trip.CreateTripViewModel
 
 
-class CreateTripScreen(val navController: NavHostController) {
+class CreateTripScreen (val navController: NavHostController) {
 
 
     @Composable
     fun Init(vm: CreateTripViewModel = hiltViewModel()) {
+
+        vm.fetchTrucks()
+        vm.fetchDrivers()
         Show(vm)
     }
 
     @Composable
     fun Show(vm: CreateTripViewModel) {
+        val autocomplete = AutoComplete()
         val uriHandler = LocalUriHandler.current
-        var points = vm.points
+        var points = vm.pointViews
 
 
         LazyColumn(
@@ -103,24 +101,9 @@ class CreateTripScreen(val navController: NavHostController) {
                             Text(fontSize = 16.sp, text = "Авто/водитель")
                         }
 
-                        //Поле "Авто"
-                        Column(modifier = Modifier.padding(vertical = 10.dp)) {
-                            Text(modifier = Modifier.padding(bottom = 5.dp), text = "Авто")
-                            TextField(
-                                modifier = Modifier.fillMaxWidth(),
-                                value = "",
-                                onValueChange = { it },
-                                label = { Text(text = "Авто") })
-                        }
-                        //Поле "Водитель"
-                        Column(modifier = Modifier.padding(vertical = 10.dp)) {
-                            Text(modifier = Modifier.padding(bottom = 5.dp), text = "Водитель")
-                            TextField(
-                                modifier = Modifier.fillMaxWidth(),
-                                value = "",
-                                onValueChange = { it },
-                                label = { Text(text = "Водитель") })
-                        }
+                        autocomplete.AutoCompleteTextField(vm.truckAC, textFieldName = "Авто", placeholder = "Наименование авто")
+                        autocomplete.AutoCompleteTextField(vm.driverAC, textFieldName = "Водитель", placeholder = "Имя водителя")
+
                     }
                 }
 
@@ -150,7 +133,8 @@ class CreateTripScreen(val navController: NavHostController) {
                                     text = if (point.type.equals("UPLOAD")) "Загрузка" else "Разгрузка"
                                 )
                             }
-                            AutoComplete(canNewValue = true, point, vm)
+
+                            autocomplete.AutoCompleteTextField(point.cargoAC, textFieldName = "Груз", placeholder = "Наименование груза")
 
                             //Заголовок "Адрес"
                             Row {
@@ -185,10 +169,11 @@ class CreateTripScreen(val navController: NavHostController) {
                                     onValueChange = { point.house.value = it },
                                     label = { Text(text = "Дом") })
                             }
-                            if(point.city.value.isNotEmpty() && point.street.value.isNotEmpty() && point.house.value.isNotEmpty()){
+                            if (point.city.value.isNotEmpty() && point.street.value.isNotEmpty() && point.house.value.isNotEmpty()) {
                                 Row {
                                     Button(onClick = {
-                                        var address = "${point.city.value} ${point.street.value} ${point.house.value}"
+                                        var address =
+                                            "${point.city.value} ${point.street.value} ${point.house.value}"
                                         address = address.replace(" ", "%20")
                                         uriHandler.openUri("https://yandex.ru/maps/2/saint-petersburg/search/${address}")
                                     }) {
@@ -204,93 +189,32 @@ class CreateTripScreen(val navController: NavHostController) {
                 }
                 Row {
                     Button(onClick = {
-                        points.add(Point("UPLOAD"))
+                        points.add(vm.createPointView("UPLOAD"))
                     }) {
                         Text("Загрузиться")
                     }
-                    if(points.size > 0){
+                    if (points.size > 0) {
                         Button(onClick = {
-                            points.add(Point("UNLOAD"))
+                            points.add(vm.createPointView("UNLOAD"))
                         }) {
                             Text("Разгрузиться")
                         }
                     }
 
                 }
-
-            }
-
-        }
-
-    }
-
-    @Composable
-    fun AutoComplete(canNewValue: Boolean, point: Point, vm: CreateTripViewModel) {
-        val focusManager = LocalFocusManager.current
-        Column(modifier = Modifier.padding(vertical = 10.dp)) {
-            Text(modifier = Modifier.padding(bottom = 5.dp), text = "Груз")
-            TextField(
-                modifier = Modifier.fillMaxWidth().onFocusEvent({event -> point.isExpandedCargoAutoComplete.value = event.isFocused }),
-                value = if (!point.isExpandedCargoAutoComplete.value) point.cargo?.name?.value.orEmpty() else point.dropDownSearchLine.value,
-                onValueChange = {
-                    point.dropDownSearchLine.value = it
-                    point.isExpandedCargoAutoComplete.value = true
-                },
-
-
-                label = { Text(text = "Наименование груза") })
-        }
-        Box {
-            DropdownMenu(
-                expanded = point.isExpandedCargoAutoComplete.value &&
-                        (point.dropDownSearchLine.value.isNotEmpty() || vm.cargos.isNotEmpty()),
-                onDismissRequest = {
-
-                },
-                properties = PopupProperties(focusable = false)
-            ) {
-                Column {
-                    if(canNewValue && point.dropDownSearchLine.value.isNotEmpty()){
-                        DropdownMenuItem(
-                            onClick = {
-
-                                val newCargo = Cargo(point.dropDownSearchLine.value)
-                                vm.cargos.remove(point.cargo)
-                                point.cargo = newCargo
-                                vm.cargos.add(newCargo)
-                                closeAndClearData(point, focusManager)
-
-                            },
-                            text = { Text(text = point.dropDownSearchLine.value) }
-                        )
+                Row{
+                    Button(onClick = {vm.createTrip()}){
+                        Text("Создать")
                     }
-                    for (cargo in vm.cargos) {
-                        DropdownMenuItem(
-                            onClick = {
-                                point.dropDownSearchLine.value = ""
-
-                                    val newCargo = Cargo(cargo.name.value)
-                                    vm.cargos.remove(point.cargo)
-                                    point.cargo = newCargo
-                                    vm.cargos.add(newCargo)
-                                closeAndClearData(point, focusManager)
-
-
-                            },
-                            text = { Text(cargo.name.value) }
-                        )
-                    }
-
                 }
+
             }
+
         }
 
     }
-    fun closeAndClearData(point: Point, focusManager:FocusManager){
-        point.isExpandedCargoAutoComplete.value = false
-        point.dropDownSearchLine.value = ""
-        focusManager.clearFocus()
-    }
+
+
 }
 
 

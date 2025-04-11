@@ -4,8 +4,9 @@ import com.example.data.model.person.create.CreatePersonRequest
 import com.example.data.storage.PersonStorage
 import com.example.domain.model.auth.LoginRequest
 import com.example.domain.model.auth.LoginResponse
-import com.example.domain.model.person.PersonDetails
-import com.example.domain.model.person.RegistryPerson
+import com.example.domain.model.person.autocomplete.DriverForAutoComplete
+import com.example.domain.model.person.details.PersonDetails
+import com.example.domain.model.person.registry.RegistryPerson
 import com.example.domain.model.person.create.CreatePersonResponse
 import com.example.domain.model.person.create.NewPerson
 import com.example.domain.repository.PersonRepository
@@ -34,5 +35,10 @@ class PersonRepositoryImpl(private val personStorage: PersonStorage) : PersonRep
         val request = LoginRequest(login, password)
         val response = personStorage.login(request)
         return response
+    }
+
+    override suspend fun getDriversForAutoComplete(): List<DriverForAutoComplete>{
+        val body = personStorage.getDriversForAutoComplete()
+        return body.drivers.map { driver -> driver.toDomainDriver() }
     }
 }

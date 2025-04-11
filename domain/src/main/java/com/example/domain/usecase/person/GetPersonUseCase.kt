@@ -1,6 +1,6 @@
 package com.example.domain.usecase.person
 
-import com.example.domain.model.person.PersonDetails
+import com.example.domain.model.person.details.PersonDetails
 import com.example.domain.repository.PersonRepository
 
 class GetPersonUseCase(private val personRepository: PersonRepository) {

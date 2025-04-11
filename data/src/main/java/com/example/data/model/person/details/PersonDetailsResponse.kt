@@ -1,6 +1,6 @@
 package com.example.data.model.person.details
 
-import com.example.domain.model.person.PersonDetails
+import com.example.domain.model.person.details.PersonDetails
 
 data class PersonDetailsResponse(
     val id: Long,

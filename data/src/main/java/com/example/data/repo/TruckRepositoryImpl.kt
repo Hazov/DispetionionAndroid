@@ -3,6 +3,7 @@ package com.example.data.repo
 
 import com.example.data.model.truck.create.CreateTruckRequest
 import com.example.data.storage.TruckStorage
+import com.example.domain.model.truck.autocomplete.TruckForAutoComplete
 import com.example.domain.model.truck.create.CreateTruckResponse
 import com.example.domain.model.truck.create.NewTruck
 import com.example.domain.model.truck.registry.RegistryTruck
@@ -26,5 +27,10 @@ class TruckRepositoryImpl(private val truckStorage: TruckStorage) : TruckReposit
         val req  = CreateTruckRequest(newTruck.brand, newTruck.model, newTruck.roadNumber)
         var dataResponse = truckStorage.createTruck(req)
         return dataResponse.toDomainCreateTruckResponse()
+    }
+
+    override suspend fun getTrucksForAutoComplete(): List<TruckForAutoComplete>{
+        val body = truckStorage.getTrucksForAutoComplete()
+        return body.trucks.map { truck -> truck.toDomainTrucks() }
     }
 }

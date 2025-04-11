@@ -34,15 +34,20 @@ class LoginScreen(val navController: NavHostController) {
                 Card {
                     Column {
                         Row {
-                            Text("Логин")
-                            TextField(value = "", onValueChange = {}, label = { Text("Логин") })
+                            Text("Email")
+                            TextField(value = vm.login.value,
+                                onValueChange = {vm.login.value = it},
+                                label = { Text("Логин") }
+                            )
                         }
                         Row {
                             Text("Пароль")
-                            TextField(value = "", onValueChange = {}, label = { Text("Пароль") })
+                            TextField(value = vm.password.value,
+                                onValueChange = {vm.password.value = it},
+                                label = { Text("Пароль") })
                         }
                         Row {
-                            Button(onClick = {}) {
+                            Button(onClick = {vm.login()}) {
                                 Text("Войти")
                             }
                         }

@@ -1,5 +1,6 @@
 package com.example.data.storage.server
 
+import com.example.data.model.person.autocomplete.DriversForAutoCompleteResponse
 import com.example.data.model.person.create.CreatePersonRequest
 import com.example.data.model.person.create.CreatePersonResponse
 import com.example.data.model.person.details.PersonDetailsResponse
@@ -25,5 +26,8 @@ interface ServerPersonStorage : PersonStorage {
 
     @POST("/api/v1/auth/login")
     override suspend fun login(@Body request: LoginRequest): LoginResponse
+
+    @GET("/api/v1/driver/autocomplete")
+    override suspend fun getDriversForAutoComplete(): DriversForAutoCompleteResponse
 
 }

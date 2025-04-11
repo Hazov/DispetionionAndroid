@@ -1,5 +1,6 @@
 package com.example.data.storage.server
 
+import com.example.data.model.truck.autocomplete.TrucksForAutoCompleteResponse
 import com.example.data.model.truck.create.CreateTruckRequest
 import com.example.data.model.truck.create.CreateTruckResponse
 import com.example.data.model.truck.details.TruckDetailsResponse
@@ -21,4 +22,7 @@ interface ServerTruckStorage: TruckStorage {
 
     @POST("/api/v1/truck/create")
     override suspend fun createTruck(@Body request: CreateTruckRequest): CreateTruckResponse
+
+    @GET("/api/v1/truck/autocomplete")
+    override suspend fun getTrucksForAutoComplete(): TrucksForAutoCompleteResponse
 }

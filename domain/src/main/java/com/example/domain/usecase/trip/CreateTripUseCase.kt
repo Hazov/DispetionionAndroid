@@ -12,3 +12,14 @@ class CreateTripUseCase(private val tripRepository: TripRepository) {
         return tripRepository.createTrip(newTrip);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
