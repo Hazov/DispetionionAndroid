@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.person.details.PersonDetails
 import com.example.domain.usecase.person.GetPersonUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +19,10 @@ class PersonDetailsViewModel @Inject constructor(private val getPersonUseCase: G
     var person: LiveData<PersonDetails> = _person
 
     fun fetchPerson(id: Long) {
-        viewModelScope.launch {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+
+        }
+        viewModelScope.launch(exceptionHandler) {
             _person.value = getPersonUseCase.execute(id)
         }
     }

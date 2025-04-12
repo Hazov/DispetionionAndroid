@@ -13,6 +13,7 @@ import com.example.domain.usecase.trip.CreateTripUseCase
 import com.example.domain.usecase.trip.autocomplete.GetDriversAutoCompleteUseCase
 import com.example.domain.usecase.trip.autocomplete.GetTrucksAutoCompleteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,7 +35,10 @@ class CreateTripViewModel @Inject constructor(
     var driverAC = AutoCompleteModel<CreateTripDriverView>(driverViews)
 
     fun fetchTrucks() {
-        viewModelScope.launch {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+
+        }
+        viewModelScope.launch(exceptionHandler) {
             val trucks = getTrucksAutoCompleteUseCase.execute()
             truckViews.addAll(trucks.map { truck ->
                 CreateTripTruckView(
@@ -48,7 +52,10 @@ class CreateTripViewModel @Inject constructor(
     }
 
     fun fetchDrivers() {
-        viewModelScope.launch {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+
+        }
+        viewModelScope.launch(exceptionHandler) {
             val drivers = getDriversAutoCompleteUseCase.execute()
             driverViews.addAll(drivers.map { driver ->
                 CreateTripDriverView(
@@ -62,7 +69,10 @@ class CreateTripViewModel @Inject constructor(
     }
 
     fun createTrip() {
-        viewModelScope.launch {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+
+        }
+        viewModelScope.launch(exceptionHandler) {
             createTripUseCase.execute(newTrip())
         }
     }

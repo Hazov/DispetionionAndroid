@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.trip.details.TripDetails
 import com.example.domain.usecase.trip.GetTripUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +20,10 @@ class TripDetailsViewModel @Inject constructor(private val getTripUseCase: GetTr
     var trip: LiveData<TripDetails> = _trip
 
     fun fetchTrip(id: Long) {
-        viewModelScope.launch {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+
+        }
+        viewModelScope.launch(exceptionHandler) {
             _trip.value = getTripUseCase.execute(id)
         }
     }

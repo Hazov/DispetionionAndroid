@@ -6,6 +6,7 @@ import com.example.domain.model.trip.forDriver.tripRoute.TripRoute
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoutePoint
 import com.example.domain.usecase.trip.forDriver.ChangePointStatusUseCase
 import com.example.domain.usecase.trip.forDriver.GetTripRouteUseCase
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,7 +26,10 @@ class TripRouteViewModel @Inject constructor(
     var futureTripPoints = ArrayList<TripRoutePoint>()
 
     fun fetchRoute(){
-        viewModelScope.launch {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+
+        }
+        viewModelScope.launch(exceptionHandler) {
             tripRoute = getTripRouteUseCase.execute()
             convert()
         }

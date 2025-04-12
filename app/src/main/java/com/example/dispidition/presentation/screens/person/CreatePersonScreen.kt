@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -26,7 +27,6 @@ import com.example.dispidition.presentation.viewmodel.person.CreatePersonViewMod
 class CreatePersonScreen(val navController:NavHostController) {
     @Composable
     fun Init(vm: CreatePersonViewModel = hiltViewModel()) {
-        vm.newPerson()
         Show(vm)
     }
 
@@ -94,8 +94,10 @@ class CreatePersonScreen(val navController:NavHostController) {
                     }
                 }
             }
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                Button(onClick = {vm.createPerson()}) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Button(modifier = Modifier.fillMaxWidth(0.5f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
+                    onClick = {vm.createPerson()}) {
                     Text("Создать")
                 }
             }

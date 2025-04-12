@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.truck.details.TruckDetails
 import com.example.domain.usecase.truck.GetTruckUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +19,10 @@ class TruckDetailsViewModel @Inject constructor(private val getTruckUseCase: Get
     var truck: LiveData<TruckDetails> = _truck
 
     fun fetchTruck(id: Long) {
-        viewModelScope.launch {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+
+        }
+        viewModelScope.launch(exceptionHandler) {
             _truck.value = getTruckUseCase.execute(id)
         }
     }

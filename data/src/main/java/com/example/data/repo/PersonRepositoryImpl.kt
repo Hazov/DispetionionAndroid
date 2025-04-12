@@ -1,9 +1,11 @@
 package com.example.data.repo
 
+import com.example.data.auth.TokenManager
 import com.example.data.model.person.create.CreatePersonRequest
 import com.example.data.storage.PersonStorage
-import com.example.domain.model.auth.LoginRequest
-import com.example.domain.model.auth.LoginResponse
+import com.example.domain.model.auth.login.LoginRequest
+import com.example.domain.model.auth.login.LoginResponse
+import com.example.domain.model.auth.permissions.PermissionsResponse
 import com.example.domain.model.person.autocomplete.DriverForAutoComplete
 import com.example.domain.model.person.details.PersonDetails
 import com.example.domain.model.person.registry.RegistryPerson
@@ -29,12 +31,6 @@ class PersonRepositoryImpl(private val personStorage: PersonStorage) : PersonRep
         )
         val dataResponse = personStorage.createPerson(req)
         return dataResponse.toDomainCreatePersonResponse()
-    }
-
-    override suspend fun login(login: String, password: String): LoginResponse{
-        val request = LoginRequest(login, password)
-        val response = personStorage.login(request)
-        return response
     }
 
     override suspend fun getDriversForAutoComplete(): List<DriverForAutoComplete>{

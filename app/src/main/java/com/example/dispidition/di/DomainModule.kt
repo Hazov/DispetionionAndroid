@@ -1,10 +1,13 @@
 package com.example.dispidition.di
 
-import android.content.Context
+import com.example.domain.repository.AuthRepository
 import com.example.domain.repository.PersonRepository
 import com.example.domain.repository.TripRepository
 import com.example.domain.repository.TruckRepository
 import com.example.domain.usecase.auth.LoginUseCase
+import com.example.domain.usecase.auth.LogoutUseCase
+import com.example.domain.usecase.auth.FetchPermissionsUseCase
+import com.example.domain.usecase.auth.GetPermissionsUseCase
 import com.example.domain.usecase.person.CreatePersonUseCase
 import com.example.domain.usecase.person.GetPersonUseCase
 import com.example.domain.usecase.person.GetPersonsUseCase
@@ -22,7 +25,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -104,8 +106,23 @@ class DomainModule {
 
     //auth
     @Provides
-    fun provideLoginUseCase(@ApplicationContext context:Context, personRepository: PersonRepository): LoginUseCase {
-        return LoginUseCase(context, personRepository)
+    fun provideLoginUseCase(authRepository: AuthRepository): LoginUseCase {
+        return LoginUseCase(authRepository)
+    }
+
+    @Provides
+    fun provideLogoutUseCase(authRepository: AuthRepository): LogoutUseCase {
+        return LogoutUseCase(authRepository)
+    }
+
+    @Provides
+    fun provideFetchPermissionsUseCase(authRepository: AuthRepository): FetchPermissionsUseCase {
+        return FetchPermissionsUseCase(authRepository)
+    }
+
+    @Provides
+    fun provideGetPermissionsUseCase(authRepository: AuthRepository): GetPermissionsUseCase {
+        return GetPermissionsUseCase(authRepository)
     }
 
 

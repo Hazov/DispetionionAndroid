@@ -47,7 +47,7 @@ class LoginScreen(val navController: NavHostController) {
                                 label = { Text("Пароль") })
                         }
                         Row {
-                            Button(onClick = {vm.login()}) {
+                            Button(onClick = {vm.login(navController)}) {
                                 Text("Войти")
                             }
                         }
