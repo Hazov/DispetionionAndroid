@@ -15,10 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.dispidition.presentation.viewmodel.auth.LoginViewModel
+import com.example.ui.auth.AuthUI
+import main.java.com.example.ui.create.CreateUI
 
-class LoginScreen(val navController: NavHostController) {
+class LoginScreen (val authUI: AuthUI, val createUI: CreateUI, val navController: NavHostController) {
     @Composable
     fun Init(vm: LoginViewModel = hiltViewModel()) {
         Show(vm)
@@ -26,37 +30,20 @@ class LoginScreen(val navController: NavHostController) {
 
     @Composable
     fun Show(vm: LoginViewModel) {
-        Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-            Column {
+
+        authUI.AuthContainer{
+            authUI.AuthCard{
+                authUI.Header("Вход")
+                createUI.FieldInCreateCard("Email", state = vm.login)
+                createUI.FieldInCreateCard("Пароль", state = vm.password)
+
                 Row {
-                    Text(text = "Вход", fontSize = 24.sp)
-                }
-                Card {
-                    Column {
-                        Row {
-                            Text("Email")
-                            TextField(value = vm.login.value,
-                                onValueChange = {vm.login.value = it},
-                                label = { Text("Логин") }
-                            )
-                        }
-                        Row {
-                            Text("Пароль")
-                            TextField(value = vm.password.value,
-                                onValueChange = {vm.password.value = it},
-                                label = { Text("Пароль") })
-                        }
-                        Row {
-                            Button(onClick = {vm.login(navController)}) {
-                                Text("Войти")
-                            }
-                        }
+                    Button(onClick = {vm.login(navController)}) {
+                        Text("Войти")
                     }
                 }
-
             }
         }
-
 
     }
 

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,11 +46,12 @@ import com.example.dispidition.R
 import com.example.dispidition.presentation.viewmodel.trip.TripDetailsViewModel
 import com.example.domain.model.trip.details.TripDetails
 import com.example.domain.model.trip.details.TripDetailsCargoPoint
+import com.example.ui.details.DetailsUI
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 
-class TripDetailsScreen(val navController: NavHostController) {
+class TripDetailsScreen (val detailsUI: DetailsUI, val navController: NavHostController) {
     var formatter = DateTimeFormatter.ofPattern("dd.MM")
 
     @Composable
@@ -64,41 +64,15 @@ class TripDetailsScreen(val navController: NavHostController) {
 
     @Composable
     fun Show(vm: TripDetailsViewModel) {
+        
         val trip = vm.trip.observeAsState().value
-
 
         if (trip != null) {
             val sortedPoints = trip.cargos.flatMap { cargo -> cargo.points }
                 .sortedBy { point -> point.serialNumber }
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp)
-            ) {
-                Row {
-                    Text(
-                        text = "${
-                            formatter.format(
-                                trip.creationDate.toInstant().atOffset(ZoneOffset.UTC)
-                                    .toLocalDateTime()
-                            )
-                        } - ${
-                            if (sortedPoints.last().completionUnloadingDate == null) "наст.вр" else formatter.format(
-                                sortedPoints.last().completionUnloadingDate?.toInstant()
-                                    ?.atOffset(ZoneOffset.UTC)?.toLocalDateTime()
-                            )
-                        }",
-                        fontSize = 18.sp
-                    )
-                }
-                Row {
-                    Text(
-                        text = "${sortedPoints.first().address.city} - ${sortedPoints.last().address.city}",
-                        fontSize = 26.sp
-                    )
-                }
+            detailsUI.DetailsContainer {
+                TripHeader(trip, sortedPoints)
 
                 //Линия точек
                 PointsLine(trip, sortedPoints)
@@ -111,13 +85,37 @@ class TripDetailsScreen(val navController: NavHostController) {
                         PointOfCargo(trip)
                     }
                 }
-
-
             }
 
         }
 
 
+    }
+
+    @Composable
+    fun TripHeader(trip: TripDetails, sortedPoints: List<TripDetailsCargoPoint>) {
+        Row {
+            Text(
+                text = "${
+                    formatter.format(
+                        trip.creationDate.toInstant().atOffset(ZoneOffset.UTC)
+                            .toLocalDateTime()
+                    )
+                } - ${
+                    if (sortedPoints.last().completionUnloadingDate == null) "наст.вр" else formatter.format(
+                        sortedPoints.last().completionUnloadingDate?.toInstant()
+                            ?.atOffset(ZoneOffset.UTC)?.toLocalDateTime()
+                    )
+                }",
+                fontSize = 18.sp
+            )
+        }
+        Row {
+            Text(
+                text = "${sortedPoints.first().address.city} - ${sortedPoints.last().address.city}",
+                fontSize = 26.sp
+            )
+        }
     }
 
 
@@ -186,72 +184,7 @@ class TripDetailsScreen(val navController: NavHostController) {
 
     }
 
-    @Composable
-    fun PointsLine(trip: TripDetails, points: List<TripDetailsCargoPoint>) {
-        Box(
-            Modifier
-                .horizontalScroll(rememberScrollState())
-                .width((points.size * 120).dp)
-                .padding(vertical = 30.dp)
-        ) {
 
-            Row(
-                modifier = Modifier
-                    .zIndex(9000f)
-                    .offset(x = 40.dp)
-            ) {
-                trip.cargos.flatMap { cargo -> cargo.points }
-                    .sortedBy { point -> point.serialNumber }.forEach({ point ->
-                        val backgroundColor = when (point.isCompleted) {
-                            true -> Color(0xff2a711f)
-                            false -> Color(0xff24ccc6)
-                        }
-                        val iconLoadTypeColor =
-                            if (point.type.equals("UPLOAD")) Color(0xffc56d27) else Color(0xff196646)
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            IconButton(
-                                modifier = Modifier
-                                    .padding(horizontal = 25.dp)
-                                    .background(color = backgroundColor, shape = CircleShape)
-                                    .size(50.dp),
-                                onClick = {}
-                            ) {
-
-                                Icon(
-                                    modifier = Modifier.fillMaxSize(0.5f),
-                                    tint = iconLoadTypeColor,
-                                    painter = painterResource(
-                                        if (point.type.equals("UPLOAD")) R.drawable.uploadicon
-                                        else R.drawable.unloadicon
-                                    ), contentDescription = "Загрузка"
-                                )
-                            }
-                            Text(textAlign = TextAlign.Center, text = point.address.city)
-                        }
-
-
-                    })
-
-            }
-
-            Canvas(
-                Modifier
-                    .width((points.size * 120).dp)
-                    .height(50.dp)
-                    .background(Color.Transparent)
-            ) {
-
-                val height = size.height
-                val width = size.width
-                drawLine(
-                    start = Offset(x = 0f, y = height / 2),
-                    end = Offset(x = width, y = height / 2),
-                    color = Color.DarkGray,
-                    strokeWidth = 5.0f,
-                )
-            }
-        }
-    }
 
     @Composable
     fun DriverAndTruckInfo(trip: TripDetails) {

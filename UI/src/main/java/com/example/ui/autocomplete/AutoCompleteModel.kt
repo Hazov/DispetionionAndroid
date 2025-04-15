@@ -1,8 +1,7 @@
-package com.example.dispidition.presentation.viewmodel.common.autocomplete
+package com.example.ui.autocomplete
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import com.example.dispidition.presentation.viewmodel.trip.create_trip.CreateTripCargoView
 
 class AutoCompleteModel<T: AutoCompletable>{
 
@@ -16,12 +15,5 @@ class AutoCompleteModel<T: AutoCompletable>{
         dropDownSearchLine = mutableStateOf<String>("")
         choice = null
         listModels = models
-    }
-
-    inline fun <reified T: Instantiatable> createInstance(text: String) : T {
-        if(T::class == CreateTripCargoView::class){
-            return CreateTripCargoView(text) as T;
-        }
-        throw Exception()
     }
 }

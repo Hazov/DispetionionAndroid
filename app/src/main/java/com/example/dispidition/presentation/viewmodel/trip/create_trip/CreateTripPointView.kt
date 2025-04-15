@@ -2,7 +2,7 @@ package com.example.dispidition.presentation.viewmodel.trip.create_trip
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import com.example.dispidition.presentation.viewmodel.common.autocomplete.AutoCompleteModel
+import com.example.ui.autocomplete.AutoCompleteModel
 
 class CreateTripPointView {
     val type: String

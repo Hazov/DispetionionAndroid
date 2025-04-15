@@ -1,6 +1,5 @@
 package com.example.dispidition.presentation
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,9 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -22,7 +18,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -34,7 +29,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.dispidition.R
 import com.example.dispidition.presentation.screens.auth.LoginScreen
@@ -49,13 +43,36 @@ import com.example.dispidition.presentation.screens.truck.CreateTruckScreen
 import com.example.dispidition.presentation.screens.truck.TruckDetailsScreen
 import com.example.dispidition.presentation.screens.truck.TrucksRegistryScreen
 import com.example.dispidition.presentation.viewmodel.auth.LoginViewModel
-import com.example.dispidition.presentation.viewmodel.person.CreatePersonViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
+    
+    @Inject
+    lateinit var navController: NavHostController
+    @Inject
+    lateinit var createPersonScreen: CreatePersonScreen
+    @Inject
+    lateinit var trucksRegistryScreen: TrucksRegistryScreen
+    @Inject
+    lateinit var truckDetailsScreen: TruckDetailsScreen
+    @Inject
+    lateinit var createTruckScreen: CreateTruckScreen
+    @Inject
+    lateinit var tripsRegistryScreen: TripsRegistryScreen
+    @Inject
+    lateinit var tripDetailsScreen: TripDetailsScreen
+    @Inject
+    lateinit var createTripScreen: CreateTripScreen
+    @Inject
+    lateinit var driverTripRouteScreen: TripRouteScreen
+    @Inject
+    lateinit var personsRegistryScreen: PersonsRegistryScreen
+    @Inject
+    lateinit var personDetailsScreen: PersonDetailsScreen
+    @Inject
+    lateinit var loginScreen: LoginScreen
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -90,29 +107,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val navController = rememberNavController()
-            val trucksRegistryScreen = TrucksRegistryScreen(navController)
-            val truckDetailsScreen = TruckDetailsScreen(navController)
-            val createTruckScreen = CreateTruckScreen(navController)
-
-            val tripsRegistryScreen = TripsRegistryScreen(navController)
-            val tripDetailsScreen = TripDetailsScreen(navController)
-            val createTripScreen = CreateTripScreen(navController)
-
-            //driver
-            val driverTripRouteScreen = TripRouteScreen(navController)
-
-            val personsRegistryScreen = PersonsRegistryScreen(navController)
-            val personDetailsScreen = PersonDetailsScreen(navController)
-            val createPersonScreen = CreatePersonScreen(navController)
-
-            val loginScreen = LoginScreen(navController)
-
             val vm: LoginViewModel = hiltViewModel()
             Scaffold(Modifier.fillMaxSize(),
-                bottomBar =  { BottomNavBar(navController) },
+                bottomBar = { BottomNavBar(navController) },
                 topBar = { TopNavBar(navController) })
             { padding ->
+
                 Image(
                     painter = painterResource(R.drawable.img_4),
                     "bg",
@@ -128,7 +128,6 @@ class MainActivity : ComponentActivity() {
                         startDestination = "login",
                         modifier = Modifier.weight(1f)
                     ) {
-
                         composable("trucks") {
                             trucksRegistryScreen.Init()
                         }
@@ -182,6 +181,7 @@ class MainActivity : ComponentActivity() {
                         }
 
 
+
                     }
                 }
             }
@@ -192,51 +192,51 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun TopNavBar(navController: NavHostController, vm: LoginViewModel = hiltViewModel()) {
 //        if (vm.authenticated.value) {
-            NavigationBar(containerColor = Color.Transparent) {
-                Row(horizontalArrangement = Arrangement.End) {
-                    IconButton(
-                        onClick = {
-                            vm.logout(navController)
-                        },
-                        Modifier.size(30.dp, 30.dp)
-                    ) {
-                        Icon(painterResource(R.drawable.profileicon), "Выход")
-                    }
+        NavigationBar(containerColor = Color.Transparent) {
+            Row(horizontalArrangement = Arrangement.End) {
+                IconButton(
+                    onClick = {
+                        vm.logout(navController)
+                    },
+                    Modifier.size(30.dp, 30.dp)
+                ) {
+                    Icon(painterResource(R.drawable.profileicon), "Выход")
                 }
             }
+        }
 //        }
     }
 
     @Composable
     fun BottomNavBar(navController: NavHostController, vm: LoginViewModel = hiltViewModel()) {
 //        if (vm.authenticated.value && vm.permissions.contains("ADMIN")) {
-            NavigationBar(containerColor = Color.Transparent) {
-                NavBarItems.BarItems.forEach { navItem ->
-                    NavigationBarItem(
-                        selected = true,
-                        onClick = {
-                            navController.navigate(navItem.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                }
-                                launchSingleTop = true
-                                restoreState = true
+        NavigationBar(containerColor = Color.Transparent) {
+            NavBarItems.BarItems.forEach { navItem ->
+                NavigationBarItem(
+                    selected = true,
+                    onClick = {
+                        navController.navigate(navItem.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
                             }
-                        },
-                        icon = {
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    icon = {
 
-                            Icon(
-                                painter = painterResource(navItem.image),
-                                contentDescription = navItem.title,
-                                modifier = Modifier.size(40.dp)
-                            )
-                        },
-                        label = {
-                            Text(text = navItem.title)
-                        },
-
+                        Icon(
+                            painter = painterResource(navItem.image),
+                            contentDescription = navItem.title,
+                            modifier = Modifier.size(40.dp)
                         )
-                }
+                    },
+                    label = {
+                        Text(text = navItem.title)
+                    },
+
+                    )
             }
+        }
 //        }
     }
 }

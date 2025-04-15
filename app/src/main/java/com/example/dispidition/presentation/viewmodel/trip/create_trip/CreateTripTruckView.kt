@@ -1,7 +1,7 @@
 package com.example.dispidition.presentation.viewmodel.trip.create_trip
 
 
-import com.example.dispidition.presentation.viewmodel.common.autocomplete.AutoCompletable
+import com.example.ui.autocomplete.AutoCompletable
 
 class CreateTripTruckView(val id: Long, val brand: String, val model: String, val roadNumber: String) : AutoCompletable {
 

@@ -34,7 +34,7 @@ class LoginViewModel @Inject constructor(
 
     }
 
-    fun login(navController: NavController) {
+    fun login(navController: NavHostController) {
         authenticated.value = true
         viewModelScope.launch(exceptionHandler) {
             loginUseCase.execute(login.value, password.value)

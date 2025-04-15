@@ -1,6 +1,7 @@
-package com.example.dispidition.presentation.viewmodel.common.autocomplete
+package com.example.ui.autocomplete
 
-import android.annotation.SuppressLint
+import androidx.annotation.Nullable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,24 +10,32 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
-import com.example.dispidition.presentation.viewmodel.trip.create_trip.CreateTripCargoView
+import kotlin.collections.contains
+import kotlin.collections.isNotEmpty
+import kotlin.jvm.java
+import kotlin.text.isNotEmpty
+import kotlin.text.orEmpty
 
 class AutoComplete {
     @Composable
-    inline fun <reified T : AutoCompletable> AutoCompleteTextField(ac: AutoCompleteModel<T>, textFieldName: String, placeholder: String) {
+    inline fun <reified T : AutoCompletable>  AutoCompleteTextField(ac: AutoCompleteModel<T>, crossinline createInstance: (params: String) -> Any = {}, textFieldName: String, placeholder: String) {
         val focusManager = LocalFocusManager.current
         Column(modifier = Modifier.padding(vertical = 10.dp)) {
             Text(modifier = Modifier.padding(bottom = 5.dp), text = textFieldName)
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .border(width = 1.dp, color = Color.Black, shape = RectangleShape)
                     .onFocusEvent({ event ->
                         ac.isExpandedCargoAutoComplete.value = event.isFocused
                     }),
@@ -36,6 +45,7 @@ class AutoComplete {
                     ac.dropDownSearchLine.value = it
                     ac.isExpandedCargoAutoComplete.value = true
                 },
+                colors = TextFieldDefaults.colors(unfocusedContainerColor = Color.White, focusedContainerColor = Color.White),
 
 
                 label = { Text(text = placeholder) })
@@ -54,7 +64,7 @@ class AutoComplete {
                         && ac.dropDownSearchLine.value.isNotEmpty()) {
                         DropdownMenuItem(
                             onClick = {
-                                val newCreateTripCargoView = ac.createInstance<CreateTripCargoView>(ac.dropDownSearchLine.value)
+                                val newCreateTripCargoView = createInstance(ac.dropDownSearchLine.value)
                                 ac.choice = newCreateTripCargoView as T
                                 ac.listModels.add(newCreateTripCargoView)
                                 closeAndClearData(ac, focusManager)
@@ -87,4 +97,5 @@ class AutoComplete {
         ac.dropDownSearchLine.value = ""
         focusManager.clearFocus()
     }
+
 }

@@ -17,16 +17,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.dispidition.presentation.viewmodel.truck.TruckDetailsViewModel
+import com.example.ui.details.DetailsUI
 
 
-class TruckDetailsScreen(
-    val navController: NavHostController,
-) {
+class TruckDetailsScreen(val detailsUI: DetailsUI, val navController: NavHostController) {
 
     @Composable
     fun Init(truckId: Long?, vm: TruckDetailsViewModel = hiltViewModel()) {
-        if(truckId != null){
+        if (truckId != null) {
             vm.fetchTruck(truckId)
             Show(vm);
         }
@@ -35,66 +36,18 @@ class TruckDetailsScreen(
 
     @Composable
     fun Show(vm: TruckDetailsViewModel) {
+
         val truck = vm.truck.observeAsState().value
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Row {
-                Text(text = "Общая информация")
-            }
-            Column {
-                Card(
-                    modifier = Modifier
-                        .padding(15.dp)
-                        .defaultMinSize(minHeight = 110.dp)
-                        .fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(
-                        3.dp
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Column {
-                        Row {
-                            Text(text = "Марка")
-                            Text(text = truck?.brand ?: "")
-                        }
-                        Row {
-                            Text(text = "Модель")
-                            Text(text = truck?.model ?: "")
-                        }
-                        Row {
-                            Text(text = "Номер")
-                            Text(text = truck?.roadNumber ?: "")
-                        }
-                        Row {
-                            Text(text = "Владелец")
-                            Text(text = truck?.ownerName ?: "")
-                        }
-                    }
-                }
-                Row {
-                    Text(text = "Информация по поездке")
-                }
-                Card(
-                    modifier = Modifier
-                        .padding(15.dp)
-                        .defaultMinSize(minHeight = 110.dp)
-                        .fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(
-                        3.dp
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-
-                }
+        detailsUI.DetailsContainer {
+            detailsUI.Header("Информация о поездке")
+            detailsUI.DetailsCard("Общая информация") {
+                detailsUI.DetailsPairRow("Марка", truck?.brand.orEmpty())
+                detailsUI.DetailsPairRow("Модель", truck?.model.orEmpty())
+                detailsUI.DetailsPairRow("Номер", truck?.roadNumber.orEmpty())
+                detailsUI.DetailsPairRow("Владелец", truck?.ownerName.orEmpty())
             }
         }
-
-
     }
 }
 

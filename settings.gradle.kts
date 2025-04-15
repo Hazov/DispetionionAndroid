@@ -23,3 +23,4 @@ rootProject.name = "Dispidition"
 include(":app")
 include(":data")
 include(":domain")
+include(":UI")

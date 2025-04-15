@@ -1,25 +1,27 @@
 package com.example.dispidition.presentation.viewmodel.trip.forDriver
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoute
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoutePoint
 import com.example.domain.usecase.trip.forDriver.ChangePointStatusUseCase
 import com.example.domain.usecase.trip.forDriver.GetTripRouteUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class TripRouteViewModel @Inject constructor(
     private val getTripRouteUseCase: GetTripRouteUseCase,
     private val changePointStatusUseCase: ChangePointStatusUseCase
-) :
-    ViewModel() {
+) : ViewModel() {
 
     var tripRoute: TripRoute? = null;
 
-    var isExpandPrevList = false
-    var isExpandFutureList = false
+    var isExpandPrevList = mutableStateOf(false)
+    var isExpandFutureList = mutableStateOf(false)
 
     var prevTripPoints = ArrayList<TripRoutePoint>()
     var currentTripPoint: TripRoutePoint? = null
@@ -27,7 +29,7 @@ class TripRouteViewModel @Inject constructor(
 
     fun fetchRoute(){
         val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-
+            tripRoute = null
         }
         viewModelScope.launch(exceptionHandler) {
             tripRoute = getTripRouteUseCase.execute()
@@ -49,11 +51,27 @@ class TripRouteViewModel @Inject constructor(
             } else {
                 futureTripPoints.add(point)
             }
+            currentTripPoint = point
         })
     }
 
     fun changeStatus(){
         changePointStatusUseCase.execute(currentTripPoint!!.id)
+    }
+
+    fun getActionText(point: TripRoutePoint): String{
+        if (point.type == "UNLOAD") {
+            if (point.arrivalForUnloadingDate == null)
+                return "Приехал на разгрузку"
+            else
+                return "Разгрузился"
+        } else {
+            if (point.arrivalForUploadingDate == null)
+                return "Приехал на загрузку"
+            else
+                return "загрузился"
+        }
+
     }
 
 }

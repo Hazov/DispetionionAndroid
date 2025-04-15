@@ -3,7 +3,7 @@ package com.example.dispidition.presentation.viewmodel.trip.create_trip
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dispidition.presentation.viewmodel.common.autocomplete.AutoCompleteModel
+import com.example.ui.autocomplete.AutoCompleteModel
 import com.example.domain.model.trip.create.NewAddress
 import com.example.domain.model.trip.create.NewCargo
 import com.example.domain.model.trip.create.NewPoint

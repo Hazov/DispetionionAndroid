@@ -2,8 +2,8 @@ package com.example.dispidition.presentation.viewmodel.trip.create_trip
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import com.example.dispidition.presentation.viewmodel.common.autocomplete.AutoCompletable
-import com.example.dispidition.presentation.viewmodel.common.autocomplete.Instantiatable
+import com.example.ui.autocomplete.AutoCompletable
+import com.example.ui.autocomplete.Instantiatable
 
 
 class CreateTripCargoView : AutoCompletable, Instantiatable {
