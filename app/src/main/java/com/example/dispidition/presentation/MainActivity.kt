@@ -1,5 +1,7 @@
 package com.example.dispidition.presentation
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +20,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -48,7 +52,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    
+    @Inject
+    lateinit var context: Context
     @Inject
     lateinit var navController: NavHostController
     @Inject
@@ -110,7 +115,8 @@ class MainActivity : ComponentActivity() {
             val vm: LoginViewModel = hiltViewModel()
             Scaffold(Modifier.fillMaxSize(),
                 bottomBar = { BottomNavBar(navController) },
-                topBar = { TopNavBar(navController) })
+                topBar = { TopNavBar(navController)
+                })
             { padding ->
 
                 Image(
@@ -118,8 +124,6 @@ class MainActivity : ComponentActivity() {
                     "bg",
                     Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
-
-
                 )
 
                 Column(Modifier.padding(padding)) {

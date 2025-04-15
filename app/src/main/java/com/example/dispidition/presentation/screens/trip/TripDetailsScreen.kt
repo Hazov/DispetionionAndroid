@@ -3,43 +3,27 @@ package com.example.dispidition.presentation.screens.trip
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.dispidition.R
@@ -47,11 +31,17 @@ import com.example.dispidition.presentation.viewmodel.trip.TripDetailsViewModel
 import com.example.domain.model.trip.details.TripDetails
 import com.example.domain.model.trip.details.TripDetailsCargoPoint
 import com.example.ui.details.DetailsUI
+import com.example.ui.entites.trip.TripDetailsCargoPointUIModel
+import com.example.ui.entites.trip.TripUI
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 
-class TripDetailsScreen (val detailsUI: DetailsUI, val navController: NavHostController) {
+class TripDetailsScreen(
+    val detailsUI: DetailsUI,
+    val tripUI: TripUI,
+    val navController: NavHostController
+) {
     var formatter = DateTimeFormatter.ofPattern("dd.MM")
 
     @Composable
@@ -64,25 +54,28 @@ class TripDetailsScreen (val detailsUI: DetailsUI, val navController: NavHostCon
 
     @Composable
     fun Show(vm: TripDetailsViewModel) {
-        
+
         val trip = vm.trip.observeAsState().value
 
         if (trip != null) {
             val sortedPoints = trip.cargos.flatMap { cargo -> cargo.points }
                 .sortedBy { point -> point.serialNumber }
+            val sortedPointsUI = sortedPoints.map { point ->
+                TripDetailsCargoPointUIModel(point.type, point.isCompleted, point.address.city)
+            }.toList()
 
             detailsUI.DetailsContainer {
                 TripHeader(trip, sortedPoints)
 
                 //Линия точек
-                PointsLine(trip, sortedPoints)
+                tripUI.PointsLine(sortedPointsUI, R.drawable.unloadicon, R.drawable.uploadicon)
 
                 LazyColumn {
                     item() {
                         //Информация о водителе и авто
                         DriverAndTruckInfo(trip)
                         //Информация о грузах
-                        PointOfCargo(trip)
+                        PointsOfCargo(trip)
                     }
                 }
             }
@@ -120,57 +113,52 @@ class TripDetailsScreen (val detailsUI: DetailsUI, val navController: NavHostCon
 
 
     @Composable
-    fun PointOfCargo(trip: TripDetails) {
+    fun PointsOfCargo(trip: TripDetails) {
         val uriHandler = LocalUriHandler.current
-        Row {
-            Text("Информация о грузах")
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Text(text = "Информация о грузах", fontSize = 16.sp)
         }
 
         if (trip.cargos.isNotEmpty()) {
             Column {
                 for (cargo in trip.cargos) {
-                    Row {
-                        Text("Груз ${cargo.kmDistance}")
-                    }
-                    CardInfo {
-                        RowInfo("Заказчик") {
-                            Text(cargo.customer.company.name)
-                        }
-
-                        RowInfo("Представитель") {
-                            Column {
-                                Text(cargo.customer.firstName)
-                                Text(cargo.customer.lastName)
-                            }
+                    detailsUI.DetailsCard(cardHeader = "Груз ${cargo.name}") {
+                        detailsUI.DetailsPairRow(leftText = "Заказчик", rightText = cargo.customer.company.name)
+                        detailsUI.DetailsPairRow(leftText = "Представитель"){
+                            Text(cargo.customer.firstName)
+                            Text(cargo.customer.lastName)
                         }
 
                         Column {
                             for (point in cargo.points) {
                                 HorizontalDivider(Modifier.padding(vertical = 15.dp))
                                 Column {
-                                    RowInfo("Адрес") {
+                                    detailsUI.DetailsPairRow("Адрес") {
+                                        Text(point.address.city)
+                                        Text(point.address.street)
+                                        Text(point.address.house)
                                         Row {
-                                            Column {
-                                                Text(point.address.city)
-                                                Text(point.address.street)
-                                                Text(point.address.house)
-                                                Row {
-                                                    Button(onClick = {
-                                                        var address = "${point.address.city} ${point.address.street} ${point.address.house}"
-                                                        address = address.replace(" ", "%20")
-                                                        uriHandler.openUri("https://yandex.ru/maps/2/saint-petersburg/search/${address}")
-                                                    }) {
-                                                        Text("На карте")
-                                                    }
-                                                }
-
+                                            Button(onClick = {
+                                                var address =
+                                                    "${point.address.city} ${point.address.street} ${point.address.house}"
+                                                address = address.replace(" ", "%20")
+                                                uriHandler.openUri("https://yandex.ru/maps/2/saint-petersburg/search/${address}")
+                                            }) {
+                                                Text("На карте")
                                             }
                                         }
                                     }
-                                    RowInfo("Тип") {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(if(point.type.equals("UNLOAD")) "Разгрузка" else "Загрузка")
-                                            Circle(6, if(point.type.equals("UNLOAD")) Color.Green else Color.Red)
+                                    detailsUI.DetailsPairRow("Тип") {
+                                        Row {
+                                            Text(if (point.type.equals("UNLOAD")) "Разгрузка" else "Загрузка")
+                                            Icon(
+                                                modifier = Modifier.size(25.dp).padding(start = 10.dp),
+                                                tint = if (point.type.equals("UNLOAD")) Color(0xff1d98e6) else Color(0xffe98b10),
+                                                painter = painterResource(
+                                                    if (point.type.equals("UNLOAD")) R.drawable.unloadicon else R.drawable.uploadicon
+                                                ),
+                                                contentDescription = "Разгрузка/Загрузка"
+                                            )
                                         }
                                     }
                                 }
@@ -178,6 +166,7 @@ class TripDetailsScreen (val detailsUI: DetailsUI, val navController: NavHostCon
 
                         }
                     }
+
                 }
             }
         }
@@ -185,25 +174,17 @@ class TripDetailsScreen (val detailsUI: DetailsUI, val navController: NavHostCon
     }
 
 
-
     @Composable
     fun DriverAndTruckInfo(trip: TripDetails) {
-        Row(horizontalArrangement = Arrangement.Start) {
-            Text("Информация о водителе")
-        }
-
-        CardInfo {
-            RowInfo("Водитель") {
-                Column {
-                    Text(trip.driver.lastName)
-                    Text(trip.driver.firstName)
-                }
+        detailsUI.DetailsCard(cardHeader = "Информация о водителе") {
+            detailsUI.DetailsPairRow(leftText = "Водитель"){
+                Text(trip.driver.lastName)
+                Text(trip.driver.firstName)
             }
-            RowInfo("Авто") {
-                Column {
-                    Text("${trip.truck.brand} ${trip.truck.model}")
-                    Text(trip.truck.roadNumber)
-                }
+
+            detailsUI.DetailsPairRow(leftText = "Авто"){
+                Text("${trip.truck.brand} ${trip.truck.model}")
+                Text(trip.truck.roadNumber)
             }
         }
     }
@@ -215,39 +196,22 @@ class TripDetailsScreen (val detailsUI: DetailsUI, val navController: NavHostCon
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp)) {
+                .padding(bottom = 10.dp)
+        ) {
             Row(Modifier.fillMaxWidth(0.5f)) {
-                Text(fontWeight = FontWeight.Bold ,text = header)
+                Text(fontWeight = FontWeight.Bold, text = header)
             }
             content()
         }
     }
 
-    //TODO в отдельный класс
-    @Composable
-    fun CardInfo(content: @Composable () -> Unit) {
-        Card(
-            modifier = Modifier
-                .defaultMinSize(minHeight = 110.dp)
-                .fillMaxWidth()
-                .padding(bottom = 15.dp),
-            elevation = CardDefaults.cardElevation(
-                3.dp
-            ),
-            shape = RoundedCornerShape(10.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
-        ) {
-
-            Column(Modifier.padding(15.dp)) {
-                content()
-            }
-        }
-    }
-
 
     @Composable
-    fun Circle(size: Int, color: Color){
-        Canvas(Modifier.size(size.dp).background(Color.Transparent)) {
+    fun Circle(size: Int, color: Color) {
+        Canvas(
+            Modifier
+                .size(size.dp)
+                .background(Color.Transparent)) {
             drawCircle(
                 color = color,
                 center = center,

@@ -1,6 +1,7 @@
 package com.example.dispidition.presentation.screens.trip
 
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.dispidition.presentation.viewmodel.trip.create_trip.CreateTripCargoView
@@ -57,6 +59,11 @@ class CreateTripScreen (val createUI: CreateUI, val autocomplete: AutoComplete, 
                 //Карточка загрузки/разгрузки
                 for (point in points) {
                     createUI.CreateCard(if (point.type.equals("UPLOAD")) "Загрузка" else "Разгрузка") {
+                        if(point.cargoAC.choice?.name?.value != null){
+                            Row {
+                                Text(text = "(${point.cargoAC.choice?.name?.value})", fontSize = 11.sp)
+                            }
+                        }
                         autocomplete.AutoCompleteTextField(point.cargoAC, {name -> CreateTripCargoView(name)}, textFieldName = "Груз", placeholder = "Наименование груза")
 
                         createUI.FieldInCreateCard(fieldName = "Город", state = point.city)
@@ -88,14 +95,14 @@ class CreateTripScreen (val createUI: CreateUI, val autocomplete: AutoComplete, 
     @Composable
     fun LoadUnloadButtons(vm: CreateTripViewModel){
         val points = vm.pointViews
-        Row {
-            Button(onClick = {
+        Row (modifier = Modifier.padding(vertical = 10.dp),) {
+            Button(modifier = Modifier.padding(horizontal = 10.dp), onClick = {
                 points.add(vm.createPointView("UPLOAD"))
             }) {
                 Text("Загрузиться")
             }
             if (points.size > 0) {
-                Button(onClick = {
+                Button(modifier = Modifier.padding(horizontal = 10.dp), onClick = {
                     points.add(vm.createPointView("UNLOAD"))
                 }) {
                     Text("Разгрузиться")

@@ -18,7 +18,6 @@ class TripRegistryViewModel@Inject constructor(private val getTripsUseCase: GetT
 
     fun fetchTrucks() {
         val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-
         }
         viewModelScope.launch(exceptionHandler) {
             _trips.value = getTripsUseCase.execute();

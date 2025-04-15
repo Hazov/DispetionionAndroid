@@ -39,6 +39,9 @@ class TripRouteViewModel @Inject constructor(
     }
 
     fun convert(){
+        currentTripPoint = null
+        prevTripPoints.clear()
+        futureTripPoints.clear()
         var isCurrentFound = false;
         tripRoute?.points?.forEach({ point ->
             if(!isCurrentFound){

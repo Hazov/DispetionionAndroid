@@ -14,6 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -45,18 +46,26 @@ class DetailsUI {
             shape = RoundedCornerShape(10.dp),
         ) {
             if (cardHeader != null) {
-                Row {
-                    Text(cardHeader)
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Text(text = cardHeader, fontSize = 15.sp)
                 }
             }
             Column(
                 Modifier
-                    .fillMaxSize()
                     .padding(10.dp)
             ) {
                 content()
             }
 
+        }
+    }
+
+
+
+    @Composable
+    fun DetailsPairRow(leftText: String, rightText: String) {
+        DetailsPairRow(leftText){
+            Text(fontSize = 17.sp, text = rightText);
         }
     }
 
@@ -68,22 +77,10 @@ class DetailsUI {
                 .padding(vertical = 8.dp)
         ) {
             Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = leftText)
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 content()
             }
 
-        }
-    }
-
-    @Composable
-    fun DetailsPairRow(leftText: String, rightText: String) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            Text(modifier = Modifier.weight(0.3f), fontSize = 17.sp, text = leftText);
-            Text(fontSize = 17.sp, text = rightText);
         }
     }
 

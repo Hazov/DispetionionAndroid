@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,11 +47,10 @@ class RegistryUI {
         onClick: () -> Unit,
         @DrawableRes avatarResource: Int? = null,
         info: (@Composable () -> Unit),
-
-
-        ) {
+    ) {
         Card(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(vertical = 15.dp),
             elevation = CardDefaults.cardElevation(
                 15.dp
@@ -63,7 +63,7 @@ class RegistryUI {
 
             Row(
                 Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -82,25 +82,30 @@ class RegistryUI {
 
     @Composable
     fun Avatar(@DrawableRes resource: Int) {
-        Card(
-            shape = RoundedCornerShape(5.dp),
-            modifier = Modifier.padding(start = 10.dp)
-        ) {
-            Image(
-                painter = painterResource(resource),
-                "avatar",
-                Modifier.size(90.dp)
-            )
+        Column {
+            Card(
+                shape = RoundedCornerShape(5.dp),
+                modifier = Modifier.padding(start = 10.dp)
+            ) {
+                Image(
+                    painter = painterResource(resource),
+                    "avatar",
+                    Modifier.size(90.dp)
+                )
+            }
         }
+
     }
 
     @Composable
     fun SideActions() {
-        IconButton(
-            onClick = {},
-            Modifier.size(30.dp, 30.dp)
-        ) {
-            Icon(Icons.Filled.MoreVert, "Действия")
+        Column {
+            IconButton(
+                onClick = {},
+                Modifier.size(30.dp, 30.dp)
+            ) {
+                Icon(Icons.Filled.MoreVert, "Действия")
+            }
         }
     }
 

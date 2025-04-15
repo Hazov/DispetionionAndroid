@@ -1,5 +1,6 @@
 package com.example.ui.entites.trip
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -26,17 +27,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.example.dispidition.R
-import com.example.domain.model.trip.details.TripDetails
-import com.example.domain.model.trip.details.TripDetailsCargoPoint
 
 class TripUI {
     @Composable
-    fun PointsLine(trip: TripDetails, points: List<TripDetailsCargoPoint>) {
+    fun PointsLine(
+        sortedPoints: List<TripDetailsCargoPointUIModel>,
+        @DrawableRes unloadIcon: Int,
+        @DrawableRes uploadIcon: Int,
+    ) {
         Box(
             Modifier
                 .horizontalScroll(rememberScrollState())
-                .width((points.size * 120).dp)
+                .width((sortedPoints.size * 120).dp)
                 .padding(vertical = 30.dp)
         ) {
 
@@ -45,43 +47,40 @@ class TripUI {
                     .zIndex(9000f)
                     .offset(x = 40.dp)
             ) {
-                trip.cargos.flatMap { cargo -> cargo.points }
-                    .sortedBy { point -> point.serialNumber }.forEach({ point ->
-                        val backgroundColor = when (point.isCompleted) {
-                            true -> Color(0xff2a711f)
-                            false -> Color(0xff24ccc6)
+                sortedPoints.forEach({ point ->
+                    val backgroundColor = when (point.isCompleted) {
+                        true -> Color(0xff2a711f)
+                        false -> Color(0xff24ccc6)
+                    }
+                    val iconLoadTypeColor =
+                        if (point.type.equals("UPLOAD")) Color(0xffc56d27) else Color(0xff196646)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        IconButton(
+                            modifier = Modifier
+                                .padding(horizontal = 25.dp)
+                                .background(color = backgroundColor, shape = CircleShape)
+                                .size(50.dp),
+                            onClick = {}
+                        ) {
+
+                            Icon(
+                                modifier = Modifier.fillMaxSize(0.5f),
+                                tint = iconLoadTypeColor,
+                                painter = painterResource(if (point.type.equals("UPLOAD")) uploadIcon else unloadIcon),
+                                contentDescription = "Загрузка"
+                            )
                         }
-                        val iconLoadTypeColor =
-                            if (point.type.equals("UPLOAD")) Color(0xffc56d27) else Color(0xff196646)
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            IconButton(
-                                modifier = Modifier
-                                    .padding(horizontal = 25.dp)
-                                    .background(color = backgroundColor, shape = CircleShape)
-                                    .size(50.dp),
-                                onClick = {}
-                            ) {
-
-                                Icon(
-                                    modifier = Modifier.fillMaxSize(0.5f),
-                                    tint = iconLoadTypeColor,
-                                    painter = painterResource(
-                                        if (point.type.equals("UPLOAD")) R.drawable.uploadicon
-                                        else R.drawable.unloadicon
-                                    ), contentDescription = "Загрузка"
-                                )
-                            }
-                            Text(textAlign = TextAlign.Center, text = point.address.city)
-                        }
+                        Text(textAlign = TextAlign.Center, text = point.city)
+                    }
 
 
-                    })
+                })
 
             }
 
             Canvas(
                 Modifier
-                    .width((points.size * 120).dp)
+                    .width((sortedPoints.size * 120).dp)
                     .height(50.dp)
                     .background(Color.Transparent)
             ) {

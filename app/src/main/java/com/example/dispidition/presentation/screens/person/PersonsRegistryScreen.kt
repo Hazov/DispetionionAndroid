@@ -41,13 +41,7 @@ class PersonsRegistryScreen (val createUI: CreateUI,
                         registryUI.RegistryCard(onClick = {navController.navigate("person/${person.id}")},
                             avatarResource = R.drawable.personavatar
                         ) {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                Info(person)
-                            }
+                            Info(person)
                         }
                     }
                 }
@@ -59,11 +53,13 @@ class PersonsRegistryScreen (val createUI: CreateUI,
 
     @Composable
     fun Info(person: RegistryPerson){
-        Row {
-            Text(text = person.lastName.orEmpty() + " " + person.firstName.orEmpty())
-        }
-        Row {
-            Text(text = person.position.orEmpty())
+        Column {
+            Row {
+                Text(text = person.lastName.orEmpty() + " " + person.firstName.orEmpty())
+            }
+            Row {
+                Text(text = person.position.orEmpty())
+            }
         }
     }
 }

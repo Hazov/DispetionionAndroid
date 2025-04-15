@@ -2,7 +2,9 @@ package com.example.dispidition.presentation.screens.trip.forDriver
 
 import android.text.Layout
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,8 +45,14 @@ import com.example.domain.model.trip.details.TripDetails
 import com.example.domain.model.trip.details.TripDetailsCargoPoint
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoutePoint
 import com.example.ui.details.DetailsUI
+import com.example.ui.entites.trip.TripDetailsCargoPointUIModel
+import com.example.ui.entites.trip.TripUI
 
-class TripRouteScreen(val detailsUI: DetailsUI, val navController: NavHostController) {
+class TripRouteScreen(
+    val detailsUI: DetailsUI,
+    val tripUI: TripUI,
+    val navController: NavHostController
+) {
 
     @Composable
     fun Init(vm: TripRouteViewModel = hiltViewModel()) {
@@ -55,34 +63,41 @@ class TripRouteScreen(val detailsUI: DetailsUI, val navController: NavHostContro
     @Composable
     fun Show(vm: TripRouteViewModel) {
         val currentPoint = vm.currentTripPoint
-        if (currentPoint != null) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                item() {
-                    detailsUI.DetailsContainer {
-                        if (vm.prevTripPoints.isNotEmpty()) {
-                            ExtendablePointCardList(vm, false)
-                        }
+        val tripRoute = vm.tripRoute
+        if (tripRoute != null && currentPoint != null) {
+            val sortedUIPoints = tripRoute.points.sortedBy { it.serialNumber }
+                .map { TripDetailsCargoPointUIModel(it.type, it.isCompleted, it.address.city) }
 
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            TripPointCard(vm, currentPoint, "Текущая")
-                            ChangeStatusButton(vm.getActionText(currentPoint)) {
-                                vm.changeStatus()
+            Column() {
+                tripUI.PointsLine(sortedUIPoints, R.drawable.unloadicon, R.drawable.uploadicon)
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    item() {
+                        detailsUI.DetailsContainer {
+                            if (vm.prevTripPoints.isNotEmpty()) {
+                                ExtendablePointCardList(vm, false)
                             }
+
+                            Box(
+                                modifier = Modifier.fillMaxSize().padding(bottom = 50.dp),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                TripPointCard(vm, currentPoint, "Текущая")
+                                ChangeStatusButton(vm.getActionText(currentPoint)) {
+                                    vm.changeStatus()
+                                }
+                            }
+
+                            if (vm.futureTripPoints.isNotEmpty()) {
+                                ExtendablePointCardList(vm, true)
+                            }
+
                         }
-
-
-
-                        if (vm.futureTripPoints.isNotEmpty()) {
-                            ExtendablePointCardList(vm, true)
-                        }
-
                     }
-                }
 
+                }
             }
+
+
 
         }
     }
@@ -100,9 +115,9 @@ class TripRouteScreen(val detailsUI: DetailsUI, val navController: NavHostContro
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(if (!isFuture) "Пройденные точки" else "Будущие точки")
-                Icon(
-                    modifier = Modifier.size(25.dp),
-                    painter = painterResource(if (!isExpand.value) R.drawable.expand else R.drawable.collapse),
+                Image(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(if (!isExpand.value) R.drawable.down else R.drawable.up),
                     contentDescription = "Открыть/Скрыть"
                 )
 
@@ -131,23 +146,16 @@ class TripRouteScreen(val detailsUI: DetailsUI, val navController: NavHostContro
                     point.cargoName
                 )
                 detailsUI.DetailsPairRow("По адресу:") {
-                    Row {
-                        Text("Город:")
-                        Text(text = point.address.city)
-                    }
-                    Row {
-                        Text("Улица:")
-                        Text(text = point.address.street)
-                    }
-                    Row {
-                        Text("Дом:")
-                        Text(text = point.address.house)
-                    }
+                    Text("Город: ${point.address.city}")
+                    Text("Улица: ${point.address.street}")
+                    Text("Дом: ${point.address.house} ")
                 }
 
                 detailsUI.DetailsPairRow("Показать на карте:") {
-                    IconButton(modifier = Modifier.size(70.dp), onClick = {}) {
-                        Icon(painterResource(R.drawable.gpsreporticon), "Карта")
+                    IconButton(modifier = Modifier.size(60.dp).border(1.dp, Color.Black, CircleShape), onClick = {}) {
+                        Icon(modifier = Modifier.size(45.dp),
+                            painter =  painterResource(R.drawable.ongps),
+                            contentDescription =  "Карта")
                     }
                 }
             }
@@ -156,75 +164,7 @@ class TripRouteScreen(val detailsUI: DetailsUI, val navController: NavHostContro
 
 
     @Composable
-    fun PointsLine(trip: TripDetails, points: List<TripDetailsCargoPoint>) {
-        Box(
-            Modifier
-                .horizontalScroll(rememberScrollState())
-                .width((points.size * 120).dp)
-                .padding(vertical = 30.dp)
-        ) {
-
-            Row(
-                modifier = Modifier
-                    .zIndex(9000f)
-                    .offset(x = 40.dp)
-            ) {
-                trip.cargos.flatMap { cargo -> cargo.points }
-                    .sortedBy { point -> point.serialNumber }.forEach({ point ->
-                        val backgroundColor = when (point.isCompleted) {
-                            true -> Color(0xff2a711f)
-                            false -> Color(0xff24ccc6)
-                        }
-                        val iconLoadTypeColor =
-                            if (point.type.equals("UPLOAD")) Color(0xffc56d27) else Color(0xff196646)
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            IconButton(
-                                modifier = Modifier
-                                    .padding(horizontal = 25.dp)
-                                    .background(color = backgroundColor, shape = CircleShape)
-                                    .size(50.dp),
-                                onClick = {}
-                            ) {
-
-                                Icon(
-                                    modifier = Modifier.fillMaxSize(0.5f),
-                                    tint = iconLoadTypeColor,
-                                    painter = painterResource(
-                                        if (point.type.equals("UPLOAD")) R.drawable.uploadicon
-                                        else R.drawable.unloadicon
-                                    ), contentDescription = "Загрузка"
-                                )
-                            }
-                            Text(textAlign = TextAlign.Center, text = point.address.city)
-                        }
-                    })
-
-            }
-
-            Canvas(
-                Modifier
-                    .width((points.size * 120).dp)
-                    .height(50.dp)
-                    .background(Color.Transparent)
-            ) {
-
-                val height = size.height
-                val width = size.width
-                drawLine(
-                    start = Offset(x = 0f, y = height / 2),
-                    end = Offset(x = width, y = height / 2),
-                    color = Color.DarkGray,
-                    strokeWidth = 5.0f,
-                )
-            }
-
-
-        }
-    }
-
-    @Composable
     fun ChangeStatusButton(action: String, onClick: () -> Unit) {
-//        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter){
         Button(
             modifier = Modifier
                 .height(80.dp)
@@ -234,8 +174,6 @@ class TripRouteScreen(val detailsUI: DetailsUI, val navController: NavHostContro
             onClick = { onClick() }) {
             Text(text = action)
         }
-//        }
-
     }
 
 

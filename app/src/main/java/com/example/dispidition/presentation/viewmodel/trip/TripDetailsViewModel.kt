@@ -25,6 +25,9 @@ class TripDetailsViewModel @Inject constructor(private val getTripUseCase: GetTr
         }
         viewModelScope.launch(exceptionHandler) {
             _trip.value = getTripUseCase.execute(id)
+            if(_trip.value != null){
+               _trip.value?.cargos?.forEach{it.points = it.points.sortedBy { it.serialNumber }}
+            }
         }
     }
 
