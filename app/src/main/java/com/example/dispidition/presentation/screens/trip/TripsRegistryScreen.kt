@@ -3,7 +3,6 @@ package com.example.dispidition.presentation.screens.trip
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +14,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.dispidition.R
-import com.example.dispidition.presentation.viewmodel.trip.TripRegistryViewModel
+import com.example.dispidition.app.global.GlobalSettings
+import com.example.dispidition.presentation.viewmodel.trip.trip_registry.TripRegistryViewModel
 import com.example.domain.model.trip.registry.RegistryTrip
 import com.example.ui.registry.RegistryUI
 import main.java.com.example.ui.create.CreateUI
@@ -23,11 +23,15 @@ import main.java.com.example.ui.create.CreateUI
 class TripsRegistryScreen(
     val createUI: CreateUI,
     val registryUI: RegistryUI,
+    val globalSettings: GlobalSettings,
     val navController: NavHostController
 ) {
 
     @Composable
     fun Init(vm: TripRegistryViewModel = hiltViewModel()) {
+        if(!globalSettings.authenticated.value){
+            navController.navigate("login")
+        }
         vm.fetchTrucks()
         Show(vm);
     }

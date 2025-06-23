@@ -1,7 +1,6 @@
 package com.example.dispidition.presentation.screens.trip
 
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,18 +16,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.dispidition.app.global.GlobalSettings
 import com.example.dispidition.presentation.viewmodel.trip.create_trip.CreateTripCargoView
 import com.example.ui.autocomplete.AutoComplete
 import com.example.dispidition.presentation.viewmodel.trip.create_trip.CreateTripViewModel
 import main.java.com.example.ui.create.CreateUI
 
 
-class CreateTripScreen (val createUI: CreateUI, val autocomplete: AutoComplete, navController: NavHostController) {
+class CreateTripScreen(
+    val createUI: CreateUI,
+    val autocomplete: AutoComplete,
+    val globalSettings: GlobalSettings,
+    val navController: NavHostController
+) {
 
 
     @Composable
     fun Init(vm: CreateTripViewModel = hiltViewModel()) {
-
+        if(!globalSettings.authenticated.value){
+            navController.navigate("login")
+        }
         vm.fetchTrucks()
         vm.fetchDrivers()
         Show(vm)
@@ -52,19 +59,35 @@ class CreateTripScreen (val createUI: CreateUI, val autocomplete: AutoComplete, 
                 Spacer(Modifier.padding(vertical = 10.dp))
 
                 createUI.CreateCard("Авто/водитель") {
-                    autocomplete.AutoCompleteTextField(vm.truckAC, textFieldName = "Авто", placeholder = "Наименование авто")
-                    autocomplete.AutoCompleteTextField(vm.driverAC, textFieldName = "Водитель", placeholder = "Имя водителя")
+                    autocomplete.AutoCompleteTextField(
+                        vm.truckAC,
+                        textFieldName = "Авто",
+                        placeholder = "Наименование авто"
+                    )
+                    autocomplete.AutoCompleteTextField(
+                        vm.driverAC,
+                        textFieldName = "Водитель",
+                        placeholder = "Имя водителя"
+                    )
                 }
 
                 //Карточка загрузки/разгрузки
                 for (point in points) {
                     createUI.CreateCard(if (point.type.equals("UPLOAD")) "Загрузка" else "Разгрузка") {
-                        if(point.cargoAC.choice?.name?.value != null){
+                        if (point.cargoAC.choice?.name?.value != null) {
                             Row {
-                                Text(text = "(${point.cargoAC.choice?.name?.value})", fontSize = 11.sp)
+                                Text(
+                                    text = "(${point.cargoAC.choice?.name?.value})",
+                                    fontSize = 11.sp
+                                )
                             }
                         }
-                        autocomplete.AutoCompleteTextField(point.cargoAC, {name -> CreateTripCargoView(name)}, textFieldName = "Груз", placeholder = "Наименование груза")
+                        autocomplete.AutoCompleteTextField(
+                            point.cargoAC,
+                            { name -> CreateTripCargoView(name) },
+                            textFieldName = "Груз",
+                            placeholder = "Наименование груза"
+                        )
 
                         createUI.FieldInCreateCard(fieldName = "Город", state = point.city)
                         createUI.FieldInCreateCard(fieldName = "Улица", state = point.street)
@@ -73,7 +96,8 @@ class CreateTripScreen (val createUI: CreateUI, val autocomplete: AutoComplete, 
                         if (point.city.value.isNotEmpty() && point.street.value.isNotEmpty() && point.house.value.isNotEmpty()) {
                             Row {
                                 Button(onClick = {
-                                    var address = "${point.city.value} ${point.street.value} ${point.house.value}"
+                                    var address =
+                                        "${point.city.value} ${point.street.value} ${point.house.value}"
                                     address = address.replace(" ", "%20")
                                     uriHandler.openUri("https://yandex.ru/maps/2/saint-petersburg/search/${address}")
                                 }) {
@@ -92,10 +116,11 @@ class CreateTripScreen (val createUI: CreateUI, val autocomplete: AutoComplete, 
         }
 
     }
+
     @Composable
-    fun LoadUnloadButtons(vm: CreateTripViewModel){
+    fun LoadUnloadButtons(vm: CreateTripViewModel) {
         val points = vm.pointViews
-        Row (modifier = Modifier.padding(vertical = 10.dp),) {
+        Row(modifier = Modifier.padding(vertical = 10.dp)) {
             Button(modifier = Modifier.padding(horizontal = 10.dp), onClick = {
                 points.add(vm.createPointView("UPLOAD"))
             }) {

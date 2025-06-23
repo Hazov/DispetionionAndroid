@@ -6,9 +6,7 @@ data class TripDetailsCargoPoint(
     val address: TripDetailsCargoPointAddress,
     val type: String,
     val serialNumber: Int,
-    val arrivalForUploadingDate: Date?,
-    val arrivalForUnloadingDate: Date?,
-    val completionUploadingDate: Date?,
-    val completionUnloadingDate: Date?,
+    val arrivalDate: Date?,
+    val completionDate: Date?,
     val isCompleted: Boolean
 )

@@ -16,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
@@ -27,7 +26,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.dispidition.R
-import com.example.dispidition.presentation.viewmodel.trip.TripDetailsViewModel
+import com.example.dispidition.app.global.GlobalSettings
+import com.example.dispidition.presentation.viewmodel.trip.trip_details.TripDetailsViewModel
 import com.example.domain.model.trip.details.TripDetails
 import com.example.domain.model.trip.details.TripDetailsCargoPoint
 import com.example.ui.details.DetailsUI
@@ -40,12 +40,16 @@ import java.time.format.DateTimeFormatter
 class TripDetailsScreen(
     val detailsUI: DetailsUI,
     val tripUI: TripUI,
-    val navController: NavHostController
+    val globalSettings: GlobalSettings,
+    val navController: NavHostController,
 ) {
     var formatter = DateTimeFormatter.ofPattern("dd.MM")
 
     @Composable
     fun Init(id: Long?, vm: TripDetailsViewModel = hiltViewModel()) {
+        if(!globalSettings.authenticated.value){
+            navController.navigate("login")
+        }
         if (id != null) {
             vm.fetchTrip(id)
             Show(vm);
@@ -69,6 +73,10 @@ class TripDetailsScreen(
 
                 //Линия точек
                 tripUI.PointsLine(sortedPointsUI, R.drawable.unloadicon, R.drawable.uploadicon)
+
+                Button(onClick = {navController.navigate("tripGps/${trip.id}")}) {
+                    Text("GPS данные по поездке")
+                }
 
                 LazyColumn {
                     item() {
@@ -95,8 +103,8 @@ class TripDetailsScreen(
                             .toLocalDateTime()
                     )
                 } - ${
-                    if (sortedPoints.last().completionUnloadingDate == null) "наст.вр" else formatter.format(
-                        sortedPoints.last().completionUnloadingDate?.toInstant()
+                    if (sortedPoints.last().completionDate == null) "наст.вр" else formatter.format(
+                        sortedPoints.last().completionDate?.toInstant()
                             ?.atOffset(ZoneOffset.UTC)?.toLocalDateTime()
                     )
                 }",
@@ -115,8 +123,8 @@ class TripDetailsScreen(
     @Composable
     fun PointsOfCargo(trip: TripDetails) {
         val uriHandler = LocalUriHandler.current
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Text(text = "Информация о грузах", fontSize = 16.sp)
+        Row(modifier = Modifier.fillMaxWidth().padding(top = 15.dp), horizontalArrangement = Arrangement.Center) {
+            Text(text = "Информация о грузах", fontSize = 20.sp)
         }
 
         if (trip.cargos.isNotEmpty()) {
@@ -132,11 +140,15 @@ class TripDetailsScreen(
                         Column {
                             for (point in cargo.points) {
                                 HorizontalDivider(Modifier.padding(vertical = 15.dp))
+                                Text(point.serialNumber.toString())
                                 Column {
                                     detailsUI.DetailsPairRow("Адрес") {
                                         Text(point.address.city)
                                         Text(point.address.street)
                                         Text(point.address.house)
+                                    }
+
+                                    detailsUI.DetailsPairRow(""){
                                         Row {
                                             Button(onClick = {
                                                 var address =

@@ -7,13 +7,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.dispidition.app.global.GlobalSettings
 import com.example.dispidition.presentation.viewmodel.truck.CreateTruckViewModel
 import main.java.com.example.ui.create.CreateUI
 
-class CreateTruckScreen(val createUI: CreateUI, val navController: NavHostController) {
+class CreateTruckScreen(val createUI: CreateUI, val globalSettings: GlobalSettings, val navController: NavHostController) {
 
     @Composable
     fun Init(vm: CreateTruckViewModel = hiltViewModel()) {
+        if(!globalSettings.authenticated.value){
+            navController.navigate("login")
+        }
         vm.newTruckModel()
         Show(vm)
     }

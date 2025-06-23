@@ -6,6 +6,9 @@ plugins {
 }
 
 android {
+    packaging {
+        resources.excludes.add("META-INF/**")
+    }
     namespace = "com.example.domain"
     compileSdk = 35
 
@@ -35,7 +38,8 @@ android {
 }
 
 dependencies {
-
+    implementation ("androidx.work:work-runtime-ktx:2.7.1")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

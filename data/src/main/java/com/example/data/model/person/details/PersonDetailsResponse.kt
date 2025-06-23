@@ -1,6 +1,7 @@
 package com.example.data.model.person.details
 
 import com.example.domain.model.person.details.PersonDetails
+import java.util.Date
 
 data class PersonDetailsResponse(
     val id: Long,
@@ -8,7 +9,7 @@ data class PersonDetailsResponse(
     val firstName: String,
     val middleName: String,
     val email: String,
-    val registrationDate: String,
+    val registrationDate: Date,
     val company: PersonDetailsCompanyR,
     val position: String,
     val isFired: Boolean

@@ -9,7 +9,7 @@ import com.example.domain.model.trip.create.NewCargo
 import com.example.domain.model.trip.create.NewPoint
 import com.example.domain.model.trip.create.NewTrip
 
-import com.example.domain.usecase.trip.CreateTripUseCase
+import com.example.domain.usecase.trip.create.CreateTripUseCase
 import com.example.domain.usecase.trip.autocomplete.GetDriversAutoCompleteUseCase
 import com.example.domain.usecase.trip.autocomplete.GetTrucksAutoCompleteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

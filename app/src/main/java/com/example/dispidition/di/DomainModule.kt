@@ -1,19 +1,25 @@
 package com.example.dispidition.di
 
+import android.content.Context
+import com.example.dispidition.app.global.GlobalSettings
 import com.example.domain.repository.AuthRepository
+import com.example.domain.repository.FirebaseRepository
+import com.example.domain.repository.LocationRepository
 import com.example.domain.repository.PersonRepository
 import com.example.domain.repository.TripRepository
 import com.example.domain.repository.TruckRepository
 import com.example.domain.usecase.auth.LoginUseCase
 import com.example.domain.usecase.auth.LogoutUseCase
 import com.example.domain.usecase.auth.FetchPermissionsUseCase
+import com.example.domain.usecase.auth.GetDeviceTokenUseCase
 import com.example.domain.usecase.auth.GetPermissionsUseCase
+import com.example.domain.usecase.gps.DefineGpsUseCase
 import com.example.domain.usecase.person.CreatePersonUseCase
 import com.example.domain.usecase.person.GetPersonUseCase
 import com.example.domain.usecase.person.GetPersonsUseCase
-import com.example.domain.usecase.trip.CreateTripUseCase
-import com.example.domain.usecase.trip.GetTripUseCase
-import com.example.domain.usecase.trip.GetTripsUseCase
+import com.example.domain.usecase.trip.create.CreateTripUseCase
+import com.example.domain.usecase.trip.get_trip.GetTripUseCase
+import com.example.domain.usecase.trip.get_trips.GetTripsUseCase
 import com.example.domain.usecase.trip.autocomplete.GetDriversAutoCompleteUseCase
 import com.example.domain.usecase.trip.autocomplete.GetTrucksAutoCompleteUseCase
 import com.example.domain.usecase.trip.forDriver.GetTripRouteUseCase
@@ -21,10 +27,13 @@ import com.example.domain.usecase.truck.CreateTruckUseCase
 import com.example.domain.usecase.truck.GetTruckUseCase
 import com.example.domain.usecase.truck.GetTrucksUseCase
 import com.example.domain.usecase.trip.forDriver.ChangePointStatusUseCase
+import com.example.domain.usecase.trip.get_trip_gps.GetTripGpsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -81,6 +90,12 @@ class DomainModule {
         return ChangePointStatusUseCase(tripRepository)
     }
 
+    @Provides
+    fun providesGetTripGpsUseCase(tripRepository: TripRepository): GetTripGpsUseCase {
+        return GetTripGpsUseCase(tripRepository)
+    }
+
+
 
 
     //person
@@ -125,6 +140,15 @@ class DomainModule {
         return GetPermissionsUseCase(authRepository)
     }
 
+    @Provides
+    fun provideGetDeviceTokenUseCase(firebaseRepository: FirebaseRepository): GetDeviceTokenUseCase {
+        return GetDeviceTokenUseCase(firebaseRepository)
+    }
 
-    
+
+    //gps
+    @Provides
+    fun provideGetGpsUseCase(@ApplicationContext context: Context, locationRepository: LocationRepository): DefineGpsUseCase {
+        return DefineGpsUseCase(context, locationRepository)
+    }
 }

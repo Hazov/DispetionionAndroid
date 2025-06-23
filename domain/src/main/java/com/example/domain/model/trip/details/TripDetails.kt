@@ -5,7 +5,7 @@ import java.util.Date
 
 data class TripDetails(
     val id: Long,
-    val cargos: List<TripDetailsCargo>,
+    var cargos: List<TripDetailsCargo>,
     val sourceAddress: TripDetailsAddress,
     val destinationAddress: TripDetailsAddress,
     val isCompleted: Boolean,

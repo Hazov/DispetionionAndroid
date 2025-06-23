@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.dispidition.R
+import com.example.dispidition.app.global.GlobalSettings
 import com.example.dispidition.presentation.viewmodel.truck.TrucksRegistryViewModel
 import com.example.domain.model.truck.registry.RegistryTruck
 import com.example.ui.registry.RegistryUI
@@ -23,12 +24,16 @@ import main.java.com.example.ui.create.CreateUI
 class TrucksRegistryScreen(
     val createUI: CreateUI,
     val registryUI: RegistryUI,
+    val globalSettings: GlobalSettings,
     val navController: NavHostController
 ) {
 
 
     @Composable
     fun Init(vm: TrucksRegistryViewModel = hiltViewModel()) {
+        if(!globalSettings.authenticated.value){
+            navController.navigate("login")
+        }
         vm.fetchTrucks()
         Show(vm);
     }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "190622229963",
+    "project_id": "dispedition-28fad",
+    "storage_bucket": "dispedition-28fad.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190622229963:android:d15618881c9d014ab1824e",
+        "android_client_info": {
+          "package_name": "com.example.dispidition"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5ybZ0WRuLOZJeFVj25ie3txzGVd7ba-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

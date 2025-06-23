@@ -8,10 +8,8 @@ data class TripRoutePoint(
     val address: TripRoutePointAddress,
     val type: String,
     val serialNumber: Int,
-    val arrivalForUploadingDate: Date?,
-    val arrivalForUnloadingDate: Date?,
-    val completionUploadingDate: Date?,
-    val completionUnloadingDate: Date?,
-    val isCompleted: Boolean,
+    var arrivalDate: Date?,
+    var completionDate: Date?,
+    var isCompleted: Boolean,
     val cargoName: String
 )

@@ -8,10 +8,8 @@ data class TripRoutePointR(
     val address: TripRoutePointAddressR,
     val type: String,
     val serialNumber: Int,
-    val arrivalForUploadingDate: Date?,
-    val arrivalForUnloadingDate: Date?,
-    val completionUploadingDate: Date?,
-    val completionUnloadingDate: Date?,
+    val arrivalDate: Date?,
+    val completionDate: Date?,
     val isCompleted: Boolean,
     val cargoName: String
 ) {
@@ -21,10 +19,8 @@ data class TripRoutePointR(
             address.toDomainTripRoutePointAddress(),
             type,
             serialNumber,
-            arrivalForUploadingDate,
-            arrivalForUnloadingDate,
-            completionUploadingDate,
-            completionUnloadingDate,
+            arrivalDate,
+            completionDate,
             isCompleted,
             cargoName
         )

@@ -7,10 +7,8 @@ data class TripDetailsCargoPointR(
     val address: TripDetailsCargoPointAddressR,
     val type: String,
     val serialNumber: Int,
-    val arrivalForUploadingDate: Date,
-    val arrivalForUnloadingDate: Date,
-    val completionUploadingDate: Date,
-    val completionUnloadingDate: Date,
+    val arrivalDate: Date,
+    val completionDate: Date,
     val isCompleted: Boolean
 ){
     fun toDomainTripDetailsCargoPoint():TripDetailsCargoPoint{
@@ -18,10 +16,8 @@ data class TripDetailsCargoPointR(
             address.toDomainTripDetailsCargoPointAddress(),
             type,
             serialNumber,
-            arrivalForUploadingDate,
-            arrivalForUnloadingDate,
-            completionUploadingDate,
-            completionUnloadingDate,
+            arrivalDate,
+            completionDate,
             isCompleted)
     }
 }

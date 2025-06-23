@@ -1,4 +1,4 @@
-package com.example.data.model.trip.forDriver.changeStatus
+package com.example.data.model.trip.forDriver.changeStatus.response
 import com.example.domain.model.trip.forDriver.changeStatus.ChangePointStatusResponse
 
 class ChangePointStatusResponse {

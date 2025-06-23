@@ -8,6 +8,9 @@ plugins {
 }
 
 android {
+    packaging {
+        resources.excludes.add("META-INF/**")
+    }
     namespace = "com.example.ui"
     compileSdk = 35
 

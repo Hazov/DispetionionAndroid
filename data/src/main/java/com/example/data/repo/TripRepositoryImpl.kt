@@ -2,14 +2,18 @@ package com.example.data.repo
 
 
 import com.example.data.model.trip.create.CreateTripRequest
-import com.example.data.model.trip.forDriver.changeStatus.ChangePointStatusRequest
+import com.example.data.model.trip.forDriver.changeStatus.request.ChangePointStatusRequest
+import com.example.data.model.trip.forDriver.changeStatus.request.ChangeTripGpsDataReq
 import com.example.data.storage.TripStorage
 import com.example.domain.model.trip.create.CreateTripResponse
 import com.example.domain.model.trip.create.NewTrip
 import com.example.domain.model.trip.details.TripDetails
 import com.example.domain.model.trip.forDriver.changeStatus.ChangePointStatusResponse
+import com.example.domain.model.trip.forDriver.changeStatus.ChangeTripGpsData
+import com.example.domain.model.trip.forDriver.changeStatus.ChangeTripPointStatus
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoute
 import com.example.domain.model.trip.registry.RegistryTrip
+import com.example.domain.model.trip.tripgps.TripGps
 import com.example.domain.repository.TripRepository
 
 class TripRepositoryImpl(private val tripStorage: TripStorage) : TripRepository {
@@ -21,19 +25,34 @@ class TripRepositoryImpl(private val tripStorage: TripStorage) : TripRepository 
         return tripStorage.getTrips().trips.map { trip -> trip.toDomainTripDetails() }
     }
 
-    override suspend fun createTrip(newTrip: NewTrip): CreateTripResponse{
-        var dataResponse = tripStorage.createTrip(CreateTripRequest(newTrip.cargos, newTrip.truckId, newTrip.driverId))
+    override suspend fun createTrip(newTrip: NewTrip): CreateTripResponse {
+        var dataResponse = tripStorage.createTrip(
+            CreateTripRequest(
+                newTrip.cargos,
+                newTrip.truckId,
+                newTrip.driverId
+            )
+        )
         return dataResponse.toDomainCreateTripResponse()
     }
 
-    override suspend fun getTripRouteForDriver(): TripRoute{
+    override suspend fun getTripRouteForDriver(): TripRoute {
         val routeResponse = tripStorage.getTripRouteForDriver()
         return routeResponse.toDomainTripRouteResponse()
     }
 
-    override suspend fun changePointStatus(id:Long): ChangePointStatusResponse{
-        val response =  tripStorage.changePointStatus(ChangePointStatusRequest(id))
+    override suspend fun changePointStatus(changeTripPointStatus: ChangeTripPointStatus): ChangePointStatusResponse {
+        val gpsData = changeTripPointStatus.gpsData
+        val gpsDataReq =
+            ChangeTripGpsDataReq(gpsData.latitude, gpsData.longitude)
+        val request = ChangePointStatusRequest(changeTripPointStatus.newStatus, gpsDataReq)
+        val response = tripStorage.changePointStatus(changeTripPointStatus.pointId, request)
         return response.toDomainChangePointStatusResponse();
+    }
+
+    override suspend fun getTripGpsData(tripId: Long): List<TripGps> {
+        val response = tripStorage.getTripGpsData(tripId)
+        return response.gpsData.map { TripGps(it.type, it.latitude, it.longitude, it.sendDate) }
     }
 }
 

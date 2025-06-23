@@ -1,28 +1,31 @@
 package com.example.dispidition.presentation.screens.person
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.dispidition.presentation.viewmodel.person.PersonsRegistryViewModel
 import com.example.dispidition.R
+import com.example.dispidition.app.global.GlobalSettings
 import com.example.domain.model.person.registry.RegistryPerson
 import com.example.ui.registry.RegistryUI
 import main.java.com.example.ui.create.CreateUI
 
-class PersonsRegistryScreen (val createUI: CreateUI,
-                             val registryUI: RegistryUI,
-                             val navController: NavHostController) {
+class PersonsRegistryScreen(
+    val createUI: CreateUI,
+    val registryUI: RegistryUI,
+    val globalSettings: GlobalSettings,
+    val navController: NavHostController
+) {
 
     @Composable
     fun Init(vm: PersonsRegistryViewModel = hiltViewModel()) {
+        if(!globalSettings.authenticated.value){
+            navController.navigate("login")
+        }
         vm.fetchPersons()
         Show(vm);
     }
@@ -30,15 +33,16 @@ class PersonsRegistryScreen (val createUI: CreateUI,
 
     @Composable
     fun Show(vm: PersonsRegistryViewModel) {
-        
+
         val persons = vm.persons.observeAsState().value
 
         if (persons != null) {
 
             registryUI.RegistryContainer {
                 Column {
-                    for (person in persons){
-                        registryUI.RegistryCard(onClick = {navController.navigate("person/${person.id}")},
+                    for (person in persons) {
+                        registryUI.RegistryCard(
+                            onClick = { navController.navigate("person/${person.id}") },
                             avatarResource = R.drawable.personavatar
                         ) {
                             Info(person)
@@ -47,12 +51,12 @@ class PersonsRegistryScreen (val createUI: CreateUI,
                 }
             }
 
-            createUI.CreateIcon(R.drawable.addicon) {navController.navigate("createPerson") }
+            createUI.CreateIcon(R.drawable.addicon) { navController.navigate("createPerson") }
         }
     }
 
     @Composable
-    fun Info(person: RegistryPerson){
+    fun Info(person: RegistryPerson) {
         Column {
             Row {
                 Text(text = person.lastName.orEmpty() + " " + person.firstName.orEmpty())

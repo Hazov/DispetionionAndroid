@@ -13,8 +13,8 @@ class AuthRepositoryImpl(private val authStorage: AuthStorage,
                          private val permissionsManager: PermissionsManager)
     : AuthRepository {
 
-    override suspend fun login(login: String, password: String): LoginResponse{
-        val request = LoginRequest(login, password)
+    override suspend fun login(login: String, password: String, deviceToken: String?): LoginResponse{
+        val request = LoginRequest(login, password, deviceToken)
         val response = authStorage.login(request)
         tokenManager.saveToken(response.token)
         return response.toDomainResponse()

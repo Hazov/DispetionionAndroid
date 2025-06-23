@@ -18,16 +18,16 @@ class CreatePersonViewModel @Inject constructor(private val createPersonUseCase:
     var person = NewPersonView()
 
     fun createPerson() {
-        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
 
-        }
         val newPerson = NewPerson(
             person.firstName.value,
             person.lastName.value,
             person.middleName.value,
-            person.email.value,
+            person.email.value
+        )
 
-            )
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+        }
         viewModelScope.launch(exceptionHandler) {
             createPersonUseCase.execute(newPerson)
         }

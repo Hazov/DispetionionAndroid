@@ -4,10 +4,13 @@ import android.content.Context
 import com.example.data.auth.AuthInterceptor
 import com.example.data.auth.PermissionsManager
 import com.example.data.auth.TokenManager
+import com.example.data.db.dao.LocationDao
 import com.example.data.repo.AuthRepositoryImpl
+import com.example.data.repo.FirebaseRepositoryImpl
 import com.example.data.repo.PersonRepositoryImpl
 import com.example.data.repo.TripRepositoryImpl
 import com.example.data.repo.TruckRepositoryImpl
+import com.example.data.repo.room.LocationRepositoryImpl
 import com.example.data.storage.AuthStorage
 import com.example.data.storage.PersonStorage
 import com.example.data.storage.TripStorage
@@ -17,6 +20,8 @@ import com.example.data.storage.server.ServerPersonStorage
 import com.example.data.storage.server.ServerTripStorage
 import com.example.data.storage.server.ServerTruckStorage
 import com.example.domain.repository.AuthRepository
+import com.example.domain.repository.FirebaseRepository
+import com.example.domain.repository.LocationRepository
 import com.example.domain.repository.PersonRepository
 import com.example.domain.repository.TripRepository
 import com.example.domain.repository.TruckRepository
@@ -25,11 +30,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Interceptor
-import okhttp3.Interceptor.Chain
 import okhttp3.OkHttpClient
-import okhttp3.Response
-import okhttp3.internal.connection.ConnectInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -43,6 +44,8 @@ class DataModule {
     fun provideTruckRepository(truckStorage: TruckStorage): TruckRepository {
         return TruckRepositoryImpl(truckStorage)
     }
+
+
 
     @Provides
     @Singleton
@@ -68,6 +71,18 @@ class DataModule {
     @Singleton
     fun provideAuthRepository(authStorage: AuthStorage, tokenManager: TokenManager, permissionsManager:PermissionsManager): AuthRepository {
         return AuthRepositoryImpl(authStorage, tokenManager, permissionsManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseRepository(): FirebaseRepository {
+        return FirebaseRepositoryImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocationRepository(@ApplicationContext context: Context, locationDao: LocationDao): LocationRepository {
+        return LocationRepositoryImpl(context, locationDao)
     }
 
 

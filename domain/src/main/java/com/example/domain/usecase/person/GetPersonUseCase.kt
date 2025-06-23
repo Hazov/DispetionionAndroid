@@ -8,3 +8,10 @@ class GetPersonUseCase(private val personRepository: PersonRepository) {
         return personRepository.getPerson(id);
     }
 }
+
+
+
+
+
+
+

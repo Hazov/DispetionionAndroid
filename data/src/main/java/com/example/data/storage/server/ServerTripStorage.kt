@@ -3,9 +3,10 @@ package com.example.data.storage.server
 import com.example.data.model.trip.create.CreateTripRequest
 import com.example.data.model.trip.create.CreateTripResponse
 import com.example.data.model.trip.details.TripDetailsResponse
-import com.example.data.model.trip.forDriver.changeStatus.ChangePointStatusRequest
-import com.example.data.model.trip.forDriver.changeStatus.ChangePointStatusResponse
+import com.example.data.model.trip.forDriver.changeStatus.request.ChangePointStatusRequest
+import com.example.data.model.trip.forDriver.changeStatus.response.ChangePointStatusResponse
 import com.example.data.model.trip.forDriver.tripRoute.TripRouteResponse
+import com.example.data.model.trip.gps.TripGpsDataResponse
 import com.example.data.model.trip.registry.TripsRegistryResponse
 import com.example.data.storage.TripStorage
 import retrofit2.http.Body
@@ -27,6 +28,9 @@ interface ServerTripStorage : TripStorage {
     @GET("/api/v1/driver/trip/route")
     override suspend fun getTripRouteForDriver(): TripRouteResponse
 
-    @PUT("/api/v1/trip/change_point_status/{id}")
-    override suspend fun changePointStatus(@Body changePointStatusRequest: ChangePointStatusRequest): ChangePointStatusResponse;
+    @PUT("/api/v1/driver/trip/change_point_status/{pointId}")
+    override suspend fun changePointStatus(@Path("pointId") pointId: Long, @Body changePointStatusRequest: ChangePointStatusRequest): ChangePointStatusResponse;
+
+    @GET("/api/v1/trip/{id}/gps")
+    override suspend fun getTripGpsData(@Path("id") id : Long): TripGpsDataResponse
 }

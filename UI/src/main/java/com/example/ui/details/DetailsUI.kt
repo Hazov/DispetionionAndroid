@@ -46,8 +46,8 @@ class DetailsUI {
             shape = RoundedCornerShape(10.dp),
         ) {
             if (cardHeader != null) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    Text(text = cardHeader, fontSize = 15.sp)
+                Row(modifier = Modifier.fillMaxWidth().padding(vertical = 15.dp), horizontalArrangement = Arrangement.Center) {
+                    Text(text = cardHeader, fontSize = 18.sp)
                 }
             }
             Column(

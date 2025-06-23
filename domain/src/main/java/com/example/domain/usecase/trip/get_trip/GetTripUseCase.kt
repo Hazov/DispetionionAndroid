@@ -1,4 +1,4 @@
-package com.example.domain.usecase.trip
+package com.example.domain.usecase.trip.get_trip
 
 
 import com.example.domain.model.trip.details.TripDetails

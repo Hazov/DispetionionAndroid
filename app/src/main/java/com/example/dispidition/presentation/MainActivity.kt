@@ -1,11 +1,11 @@
 package com.example.dispidition.presentation
 
-import android.content.Context
-import android.content.SharedPreferences
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,8 +20,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -46,149 +44,171 @@ import com.example.dispidition.presentation.screens.trip.forDriver.TripRouteScre
 import com.example.dispidition.presentation.screens.truck.CreateTruckScreen
 import com.example.dispidition.presentation.screens.truck.TruckDetailsScreen
 import com.example.dispidition.presentation.screens.truck.TrucksRegistryScreen
+import com.example.dispidition.app.global.GlobalSettings
 import com.example.dispidition.presentation.viewmodel.auth.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import android.Manifest
+import android.annotation.SuppressLint
+import com.example.dispidition.presentation.screens.trip.TripGpsScreen
+import com.google.android.gms.location.LocationServices
+import com.google.firebase.messaging.FirebaseMessaging
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
-    lateinit var context: Context
+    lateinit var globalSettings: GlobalSettings
+
     @Inject
     lateinit var navController: NavHostController
+
     @Inject
     lateinit var createPersonScreen: CreatePersonScreen
+
     @Inject
     lateinit var trucksRegistryScreen: TrucksRegistryScreen
+
     @Inject
     lateinit var truckDetailsScreen: TruckDetailsScreen
+
     @Inject
     lateinit var createTruckScreen: CreateTruckScreen
+
     @Inject
     lateinit var tripsRegistryScreen: TripsRegistryScreen
+
     @Inject
     lateinit var tripDetailsScreen: TripDetailsScreen
+
     @Inject
     lateinit var createTripScreen: CreateTripScreen
+
     @Inject
     lateinit var driverTripRouteScreen: TripRouteScreen
+
     @Inject
     lateinit var personsRegistryScreen: PersonsRegistryScreen
+
     @Inject
     lateinit var personDetailsScreen: PersonDetailsScreen
+
     @Inject
     lateinit var loginScreen: LoginScreen
 
+    @Inject
+    lateinit var tripGpsScreen: TripGpsScreen
+
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestGpsPermissions()
 
-//        @RequiresApi(Build.VERSION_CODES.N)
-//        fun requestPermissions() {
-//            val locationPermissionRequest = registerForActivityResult(
-//                ActivityResultContracts.RequestMultiplePermissions()
-//            ) { permissions ->
-//                when {
-//                    permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-//                        // Precise location access granted.
-//                    }
-//                    else -> {
-//                        // No location access granted.
-//                    }
-//                }
-//            }
-//            locationPermissionRequest.launch(
-//                arrayOf(
-//                    Manifest.permission.ACCESS_FINE_LOCATION,
-//                )
-//            )
-//        }
-//        requestPermissions()
-//
-//
-//        val mlocManager = getSystemService(LOCATION_SERVICE) as LocationManager;
-//        val mlocListener = MyLocationListener();
-//        mlocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0f, mlocListener);
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                val lat = location.latitude
+                val lon = location.longitude
+            }
+        }.addOnFailureListener {
+
+        }
 
 
+
+        
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val vm: LoginViewModel = hiltViewModel()
-            Scaffold(Modifier.fillMaxSize(),
-                bottomBar = { BottomNavBar(navController) },
-                topBar = { TopNavBar(navController)
-                })
-            { padding ->
-
-                Image(
-                    painter = painterResource(R.drawable.img_4),
-                    "bg",
-                    Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-
-                Column(Modifier.padding(padding)) {
-                    NavHost(
-                        navController = navController,
-                        startDestination = "login",
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        composable("trucks") {
-                            trucksRegistryScreen.Init()
+            if(globalSettings.accessFineLocation.value){
+                Scaffold(Modifier.fillMaxSize(),
+                    bottomBar = {
+                        if (globalSettings.authenticated.value && globalSettings.permissions.contains("ADMIN")) {
+                            BottomNavBar(navController)
                         }
-                        composable(
-                            "truck/{truckId}",
-                            arguments = listOf(navArgument("truckId") { type = NavType.LongType })
-                        ) { stackEntry ->
-                            val userId = stackEntry.arguments?.getLong("truckId")
-                            truckDetailsScreen.Init(userId)
-                        }
-                        composable("createTruck") {
-                            createTruckScreen.Init()
-                        }
+                    },
+                    topBar = {
+                        TopNavBar(navController)
+                    })
+                { padding ->
 
-                        composable("trips") {
-                            tripsRegistryScreen.Init()
-                        }
+                    Image(
+                        painter = painterResource(R.drawable.img_4),
+                        "bg",
+                        Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
 
-                        composable(
-                            "trip/{tripId}",
-                            arguments = listOf(navArgument("tripId") { type = NavType.LongType })
-                        ) { stackEntry ->
-                            val tripId = stackEntry.arguments?.getLong("tripId")
-                            tripDetailsScreen.Init(tripId)
-                        }
+                    Column(Modifier.padding(padding)) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = "login",
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            composable("trucks") {
+                                trucksRegistryScreen.Init()
+                            }
+                            composable(
+                                "truck/{truckId}",
+                                arguments = listOf(navArgument("truckId") { type = NavType.LongType })
+                            ) { stackEntry ->
+                                val truckId = stackEntry.arguments?.getLong("truckId")
+                                truckDetailsScreen.Init(truckId)
+                            }
+                            composable("createTruck") {
+                                createTruckScreen.Init()
+                            }
 
-                        composable("createTrip") {
-                            createTripScreen.Init()
-                        }
+                            composable("trips") {
+                                tripsRegistryScreen.Init()
+                            }
 
-                        composable("persons") {
-                            personsRegistryScreen.Init()
-                        }
+                            composable(
+                                "trip/{tripId}",
+                                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+                            ) { stackEntry ->
+                                val tripId = stackEntry.arguments?.getLong("tripId")
+                                tripDetailsScreen.Init(tripId)
+                            }
 
-                        composable(
-                            "person/{personId}",
-                            arguments = listOf(navArgument("personId") { type = NavType.LongType })
-                        ) { stackEntry ->
-                            val userId = stackEntry.arguments?.getLong("personId")
-                            personDetailsScreen.Init(userId)
-                        }
-                        composable("createPerson") {
-                            createPersonScreen.Init()
-                        }
-                        composable("login") {
-                            loginScreen.Init()
-                        }
+                            composable("createTrip") {
+                                createTripScreen.Init()
+                            }
 
-                        composable("driver_tripRoute") {
-                            driverTripRouteScreen.Init()
+                            composable(
+                                "tripGps/{tripId}",
+                                arguments = listOf(navArgument("tripId") { type = NavType.LongType })
+                            ) { stackEntry ->
+                                val tripId = stackEntry.arguments?.getLong("tripId")
+                                tripGpsScreen.Init(tripId)
+                            }
+
+                            composable("persons") {
+                                personsRegistryScreen.Init()
+                            }
+
+                            composable(
+                                "person/{personId}",
+                                arguments = listOf(navArgument("personId") { type = NavType.LongType })
+                            ) { stackEntry ->
+                                val userId = stackEntry.arguments?.getLong("personId")
+                                personDetailsScreen.Init(userId)
+                            }
+                            composable("createPerson") {
+                                createPersonScreen.Init()
+                            }
+                            composable("login") {
+                                loginScreen.Init()
+                            }
+
+                            composable("driver_tripRoute") {
+                                driverTripRouteScreen.Init()
+                            }
+
+
                         }
-
-
-
                     }
                 }
             }
+
 
         }
     }
@@ -243,6 +263,27 @@ class MainActivity : ComponentActivity() {
         }
 //        }
     }
+
+    fun requestGpsPermissions() {
+        val locationPermissionRequest = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+
+                    globalSettings.accessFineLocation.value = true
+                }
+                else -> {
+                    globalSettings.accessFineLocation.value = false
+                }
+            }
+        }
+        locationPermissionRequest.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+            )
+        )
+    }
 }
 
 
@@ -274,17 +315,7 @@ data class BarItem(
 )
 
 
-//
-//class MyLocationListener: LocationListener {
-//
-//    var latitude = 0.0;
-//    var longitude=0.0;
-//
-//    override fun onLocationChanged(loc: Location) {
-//        latitude = loc.getLatitude();
-//        longitude = loc.getLongitude();
-//    }
-//
-//}
+
+
 
 

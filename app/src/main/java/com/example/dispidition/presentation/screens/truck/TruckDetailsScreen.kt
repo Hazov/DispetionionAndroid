@@ -1,32 +1,21 @@
 package com.example.dispidition.presentation.screens.truck
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.example.dispidition.app.global.GlobalSettings
 import com.example.dispidition.presentation.viewmodel.truck.TruckDetailsViewModel
 import com.example.ui.details.DetailsUI
 
 
-class TruckDetailsScreen(val detailsUI: DetailsUI, val navController: NavHostController) {
+class TruckDetailsScreen(val detailsUI: DetailsUI, val globalSettings: GlobalSettings, val navController: NavHostController) {
 
     @Composable
     fun Init(truckId: Long?, vm: TruckDetailsViewModel = hiltViewModel()) {
+        if(!globalSettings.authenticated.value){
+            navController.navigate("login")
+        }
         if (truckId != null) {
             vm.fetchTruck(truckId)
             Show(vm);
