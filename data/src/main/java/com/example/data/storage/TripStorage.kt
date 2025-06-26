@@ -15,6 +15,6 @@ interface TripStorage {
     suspend fun getTrips(): TripsRegistryResponse;
     suspend fun createTrip(request: CreateTripRequest): CreateTripResponse;
     suspend fun getTripRouteForDriver(): TripRouteResponse;
-    suspend fun changePointStatus(id: Long, changePointStatusRequest: ChangePointStatusRequest): ChangePointStatusResponse;
+    suspend fun changePointStatus(changePointStatusRequest: ChangePointStatusRequest): ChangePointStatusResponse;
     suspend fun getTripGpsData(tripId:Long): TripGpsDataResponse
 }

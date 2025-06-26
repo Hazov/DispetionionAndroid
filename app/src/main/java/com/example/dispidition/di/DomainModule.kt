@@ -26,14 +26,11 @@ import com.example.domain.usecase.trip.forDriver.GetTripRouteUseCase
 import com.example.domain.usecase.truck.CreateTruckUseCase
 import com.example.domain.usecase.truck.GetTruckUseCase
 import com.example.domain.usecase.truck.GetTrucksUseCase
-import com.example.domain.usecase.trip.forDriver.ChangePointStatusUseCase
 import com.example.domain.usecase.trip.get_trip_gps.GetTripGpsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -83,11 +80,6 @@ class DomainModule {
     @Provides
     fun providesGetTripRouteUseCase(tripRepository: TripRepository): GetTripRouteUseCase {
         return GetTripRouteUseCase(tripRepository)
-    }
-
-    @Provides
-    fun providesChangePointStatusUseCase(tripRepository: TripRepository): ChangePointStatusUseCase {
-        return ChangePointStatusUseCase(tripRepository)
     }
 
     @Provides
@@ -148,7 +140,7 @@ class DomainModule {
 
     //gps
     @Provides
-    fun provideGetGpsUseCase(@ApplicationContext context: Context, locationRepository: LocationRepository): DefineGpsUseCase {
-        return DefineGpsUseCase(context, locationRepository)
+    fun provideDefineGpsUseCase(locationRepository: LocationRepository): DefineGpsUseCase {
+        return DefineGpsUseCase(locationRepository)
     }
 }

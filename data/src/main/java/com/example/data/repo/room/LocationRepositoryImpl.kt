@@ -62,7 +62,7 @@ class LocationRepositoryImpl @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    override suspend fun defineLocation(): android.location.Location? {
+    override fun defineLocation(): android.location.Location? {
         // Получаем текущие координаты
         return fusedLocationClient.lastLocation.await()
     }

@@ -5,9 +5,6 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.domain.repository.LocationRepository
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 // Определяет местоположение и пишет в Room. Из Room достает SendLocationWorker
@@ -22,7 +19,7 @@ class DefineLocationWorker @Inject constructor(
     override suspend fun doWork(): Result {
         try {
 
-            locationRepository.defineLocation()
+            val location = locationRepository.defineLocation()
             if (location != null) {
                 locationRepository.addLocation(location.latitude, location.longitude, "Auto")
             }

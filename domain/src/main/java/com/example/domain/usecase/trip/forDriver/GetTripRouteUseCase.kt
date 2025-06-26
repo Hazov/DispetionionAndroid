@@ -5,7 +5,7 @@ import com.example.domain.repository.TripRepository
 
 class GetTripRouteUseCase(private val tripRepository: TripRepository) {
 
-    suspend fun execute(): TripRoute{
+    suspend fun execute(): TripRoute? {
         return tripRepository.getTripRouteForDriver();
     }
 }

@@ -3,11 +3,9 @@ package com.example.dispidition.presentation.viewmodel.trip.forDriver
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.model.trip.forDriver.changeStatus.ChangeTripPointStatus
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoute
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoutePoint
 import com.example.domain.usecase.gps.DefineGpsUseCase
-import com.example.domain.usecase.trip.forDriver.ChangePointStatusUseCase
 import com.example.domain.usecase.trip.forDriver.GetTripRouteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -18,8 +16,9 @@ import javax.inject.Inject
 @HiltViewModel
 class TripRouteViewModel @Inject constructor(
     private val getTripRouteUseCase: GetTripRouteUseCase,
-    private val changePointStatusUseCase: ChangePointStatusUseCase,
-    private val defineGpsUseCase: DefineGpsUseCase
+    private val defineGpsUseCase: DefineGpsUseCase,
+    private val defineNewTripStatusUseCase: DefineNewTripStatusUseCase,
+    private val changeTripStatusUseCase: ChangeTripStatusUseCase,
 ) : ViewModel() {
 
     var tripRoute: TripRoute? = null;
@@ -31,39 +30,34 @@ class TripRouteViewModel @Inject constructor(
     var currentTripPoint = mutableStateOf<TripRoutePoint?>(null)
     var futureTripPoints =mutableSetOf<TripRoutePoint>()
 
+    //init
     fun fetchRoute() {
         val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
             tripRoute = null
         }
         viewModelScope.launch(exceptionHandler) {
             tripRoute = getTripRouteUseCase.execute()
-            convert()
+            convertModelForUi()
         }
     }
 
     fun changeStatus() {
 
         val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-            localChangeStatus()
+
         }
         viewModelScope.launch(exceptionHandler) {
-            val newStatus = getNewStatus(
-                currentTripPoint.value!!
-            )
-            val gpsCoordinates = defineGpsUseCase.execute(newStatus)
-            if (currentTripPoint.value != null) {
-                changePointStatusUseCase.execute(currentTripPoint.value!!.id, gpsCoordinates)
-            }
-            fetchRoute()
+            val newStatus = defineNewTripStatusUseCase.execute(currentTripPoint)
+            val gpsCoordinates = defineGpsUseCase.execute()
+            changeTripStatusUseCase.execute(currentTripPoint.value!!, gpsCoordinates, newStatus);
+            changeStatusInUI(newStatus)
+
+//            fetchRoute()
         }
     }
 
-    fun getNewStatus(currentTripPoint : TripRoutePoint): String{
-        return if(currentTripPoint.arrivalDate == null) "ARRIVAL" else "COMPLETE"
-    }
 
-    fun localChangeStatus(){
-        val newStatus = getNewStatus(currentTripPoint.value!!)
+    fun changeStatusInUI(newStatus: String){
         if (currentTripPoint.value != null) {
             if(newStatus.equals("ARRIVAL")){
                 currentTripPoint.value!!.arrivalDate = Date()
@@ -80,7 +74,7 @@ class TripRouteViewModel @Inject constructor(
         }
     }
 
-    fun convert() {
+    fun convertModelForUi() {
         currentTripPoint.value = null
         prevTripPoints.clear()
         futureTripPoints.clear()

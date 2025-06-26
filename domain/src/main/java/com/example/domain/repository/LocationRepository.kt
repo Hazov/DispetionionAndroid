@@ -8,5 +8,5 @@ interface LocationRepository {
     suspend fun markAsSent(id: Long)
     suspend fun getUnsentLocations(): List<Location>
     suspend fun sendLocation(location: Location)
-    suspend fun defineLocation(): android.location.Location?
+    fun defineLocation(): android.location.Location?
 }
