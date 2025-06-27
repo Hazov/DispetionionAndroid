@@ -1,5 +1,6 @@
 package com.example.dispidition.presentation.viewmodel.trip.forDriver
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +20,9 @@ class TripRouteViewModel @Inject constructor(
     private val defineGpsUseCase: DefineGpsUseCase,
     private val defineNewTripStatusUseCase: DefineNewTripStatusUseCase,
     private val changeTripStatusUseCase: ChangeTripStatusUseCase,
+
 ) : ViewModel() {
+    val isChangeStatusDlg: MutableState<Boolean> = mutableStateOf(false)
 
     var tripRoute: TripRoute? = null;
 
@@ -106,7 +109,14 @@ class TripRouteViewModel @Inject constructor(
             else
                 return "загрузился"
         }
+    }
 
+    fun showDialog() {
+        isChangeStatusDlg.value = true
+    }
+
+    fun hideChangeStatusDlg() {
+        isChangeStatusDlg.value = false
     }
 
 }

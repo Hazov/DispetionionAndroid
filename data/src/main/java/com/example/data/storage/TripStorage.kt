@@ -3,7 +3,7 @@ package com.example.data.storage
 import com.example.data.model.trip.create.CreateTripRequest
 import com.example.data.model.trip.create.CreateTripResponse
 import com.example.data.model.trip.details.TripDetailsResponse
-import com.example.data.model.trip.forDriver.changeStatus.request.ChangePointStatusRequest
+import com.example.data.model.trip.forDriver.changeStatus.request.ChangeStatusRequest
 import com.example.data.model.trip.forDriver.changeStatus.response.ChangePointStatusResponse
 import com.example.data.model.trip.forDriver.tripRoute.TripRouteResponse
 import com.example.data.model.trip.gps.TripGpsDataResponse
@@ -15,6 +15,6 @@ interface TripStorage {
     suspend fun getTrips(): TripsRegistryResponse;
     suspend fun createTrip(request: CreateTripRequest): CreateTripResponse;
     suspend fun getTripRouteForDriver(): TripRouteResponse;
-    suspend fun changePointStatus(changePointStatusRequest: ChangePointStatusRequest): ChangePointStatusResponse;
+    suspend fun changePointStatus(changeStatusRequest: ChangeStatusRequest): ChangePointStatusResponse;
     suspend fun getTripGpsData(tripId:Long): TripGpsDataResponse
 }

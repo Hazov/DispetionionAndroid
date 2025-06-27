@@ -4,7 +4,6 @@ import android.content.Context
 import com.example.data.auth.AuthInterceptor
 import com.example.data.auth.PermissionsManager
 import com.example.data.auth.TokenManager
-import com.example.data.db.dao.LocationDao
 import com.example.data.repo.AuthRepositoryImpl
 import com.example.data.repo.FirebaseRepositoryImpl
 import com.example.data.repo.PersonRepositoryImpl

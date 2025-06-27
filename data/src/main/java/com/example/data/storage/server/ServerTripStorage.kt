@@ -3,7 +3,7 @@ package com.example.data.storage.server
 import com.example.data.model.trip.create.CreateTripRequest
 import com.example.data.model.trip.create.CreateTripResponse
 import com.example.data.model.trip.details.TripDetailsResponse
-import com.example.data.model.trip.forDriver.changeStatus.request.ChangePointStatusRequest
+import com.example.data.model.trip.forDriver.changeStatus.request.ChangeStatusRequest
 import com.example.data.model.trip.forDriver.changeStatus.response.ChangePointStatusResponse
 import com.example.data.model.trip.forDriver.tripRoute.TripRouteResponse
 import com.example.data.model.trip.gps.TripGpsDataResponse
@@ -29,7 +29,7 @@ interface ServerTripStorage : TripStorage {
     override suspend fun getTripRouteForDriver(): TripRouteResponse
 
     @PUT("/api/v1/driver/trip/change_point_status/{pointId}")
-    override suspend fun changePointStatus(@Path("pointId") pointId: Long, @Body changePointStatusRequest: ChangePointStatusRequest): ChangePointStatusResponse;
+    override suspend fun changePointStatus(@Path("pointId") pointId: Long, @Body changeStatusRequest: ChangeStatusRequest): ChangePointStatusResponse;
 
     @GET("/api/v1/trip/{id}/gps")
     override suspend fun getTripGpsData(@Path("id") id : Long): TripGpsDataResponse

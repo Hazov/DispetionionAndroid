@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -50,12 +51,26 @@ class TripRouteScreen(
         if(!globalSettings.authenticated.value){
             navController.navigate("login")
         }
+
         vm.fetchRoute()
         Show(vm)
+
+        if (vm.isChangeStatusDlg.value) {
+            ConfirmationDialog(
+                message = "Вы точно хотите изменить статус?",
+                onConfirm = {
+                    vm.hideChangeStatusDlg()
+                    vm.changeStatus()
+                },
+                onCancel = { vm.hideChangeStatusDlg() }
+            )
+        }
     }
+
 
     @Composable
     fun Show(vm: TripRouteViewModel) {
+
         val currentPoint = vm.currentTripPoint.value
         val tripRoute = vm.tripRoute
         if (tripRoute != null && currentPoint != null) {
@@ -175,6 +190,29 @@ class TripRouteScreen(
             onClick = { onClick() }) {
             Text(text = action)
         }
+    }
+
+    @Composable
+    fun ConfirmationDialog(
+        message: String = "Вы точно хотите продолжить?",
+        onConfirm: () -> Unit,
+        onCancel: () -> Unit
+    ) {
+        AlertDialog(
+            onDismissRequest = onCancel,
+            title = { Text("Подтверждение") },
+            text = { Text(message) },
+            confirmButton = {
+                Button(onClick = onConfirm) {
+                    Text("Да")
+                }
+            },
+            dismissButton = {
+                Button(onClick = onCancel) {
+                    Text("Нет")
+                }
+            }
+        )
     }
 
 

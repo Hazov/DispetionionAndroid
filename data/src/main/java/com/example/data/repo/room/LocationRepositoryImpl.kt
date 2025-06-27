@@ -2,8 +2,6 @@ package com.example.data.repo.room
 
 import android.annotation.SuppressLint
 import android.content.Context
-import com.example.data.db.dao.LocationDao
-import com.example.data.db.entity.LocationEntity
 import com.example.domain.model.gps.Location
 import com.example.domain.repository.LocationRepository
 import com.google.android.gms.location.FusedLocationProviderClient
