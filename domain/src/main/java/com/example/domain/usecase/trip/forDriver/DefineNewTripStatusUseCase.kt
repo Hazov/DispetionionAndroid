@@ -1,4 +1,4 @@
-package com.example.dispidition.presentation.viewmodel.trip.forDriver
+package com.example.domain.usecase.trip.forDriver
 
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoutePoint
 

@@ -2,10 +2,13 @@ package com.example.data.repo.room
 
 import android.annotation.SuppressLint
 import android.content.Context
+import com.example.data.db.dao.LocationDao
+import com.example.data.db.entity.LocationRequestRoom
 import com.example.domain.model.gps.Location
 import com.example.domain.repository.LocationRepository
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 import javax.inject.Inject
@@ -15,53 +18,56 @@ class LocationRepositoryImpl @Inject constructor(
     private val locationDao: LocationDao
 ) : LocationRepository {
 
-    private val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(applicationContext)
+    private val fusedLocationClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(applicationContext)
 
     override suspend fun addLocation(latitude: Double, longitude: Double, status: String) {
-        val locationEntity = LocationEntity(
+        val locationEntity = LocationRequestRoom(
             id = null,
             latitude = latitude,
             longitude = longitude,
             status = status,
-            fetchDate = Date()
+            Date()
         )
         locationDao.insertLocation(locationEntity)
     }
 
-    override suspend fun markAsSent(id: Long) {
-        val existing = locationDao.getLocationById(id)
-        if (existing != null) {
-            // Обновляем запись, установив флаг sent=true
-            locationDao.updateLocation(existing.copy(sent = true))
-        }
-    }
 
-    override suspend fun getUnsentLocations(): List<Location> {
-        // Берём из базы данных список LocationEntity
-        val entities = locationDao.getUnsentLocations()
-
-        // Преобразуем каждую сущность в доменную модель Location
-        return entities.map { entity ->
-            Location(
-                id = entity.id,
-                latitude = entity.latitude,
-                longitude = entity.longitude,
-                status = entity.status,
-                fetchDate = entity.fetchDate,
-                sent = entity.sent
-            )
-        }
-    }
-
-    override suspend fun sendLocation(location: Location){
-        val locationEntity = LocationEntity(null, location.latitude, location.longitude, location.status, location.sent, location.fetchDate)
+    override suspend fun sendLocation(location: Location) {
+        val locationEntity = LocationRequestRoom(
+            null,
+            location.latitude,
+            location.longitude,
+            location.status,
+            location.fetchDate
+        )
         locationDao.insertLocation(locationEntity)
 
     }
 
     @SuppressLint("MissingPermission")
-    override fun defineLocation(): android.location.Location? {
+    override suspend fun defineLocation(): Location? {
         // Получаем текущие координаты
-        return fusedLocationClient.lastLocation.await()
+        val androidLocation = fusedLocationClient.lastLocation.await()
+        if (androidLocation == null) {
+            return null;
+        }
+        return Location(null, androidLocation.latitude, androidLocation.longitude, "", Date())
+
     }
+
+    override suspend fun getUnsentLocations(): List<Location> {
+
+        return locationDao.getUnsentLocations().value!!
+            .map { item ->
+                Location(
+                        item.id as Long?,
+                        item.latitude,
+                        item.longitude,
+                        item.status,
+                        item.fetchDate
+                    )
+                }
+            }
+
 }

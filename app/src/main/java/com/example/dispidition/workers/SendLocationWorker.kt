@@ -21,7 +21,7 @@ class SendLocationWorker @AssistedInject constructor(
             if (unsentLocations.isNotEmpty()) {
                 for (location in unsentLocations) {
                     repository.sendLocation(location)
-                    repository.markAsSent(location.id!!)
+                    //TODO remove из базы
                 }
             }
             return Result.success()

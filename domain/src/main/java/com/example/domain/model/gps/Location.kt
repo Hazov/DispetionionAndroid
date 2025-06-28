@@ -7,6 +7,5 @@ data class Location(
     val latitude: Double,
     val longitude: Double,
     val status: String,
-    val fetchDate: Date,
-    val sent: Boolean
+    val fetchDate: Date?,
 )

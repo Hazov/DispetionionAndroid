@@ -1,7 +1,7 @@
 package com.example.data.repo
 
 
-import android.location.Location
+
 import com.example.data.db.dao.ChangeStatusRequestDao
 import com.example.data.db.entity.ChangeStatusRequestRoom
 import com.example.data.db.entity.LocationRequestRoom
@@ -9,13 +9,14 @@ import com.example.data.model.trip.create.CreateTripRequest
 import com.example.data.model.trip.forDriver.changeStatus.request.ChangeStatusRequest
 import com.example.data.model.trip.forDriver.changeStatus.request.ChangeTripGpsDataReq
 import com.example.data.storage.TripStorage
+import com.example.domain.model.gps.Location
 import com.example.domain.model.trip.create.CreateTripResponse
 import com.example.domain.model.trip.create.NewTrip
 import com.example.domain.model.trip.details.TripDetails
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoute
 import com.example.domain.model.trip.registry.RegistryTrip
-import com.example.domain.model.trip.tripgps.TripGps
 import com.example.domain.repository.TripRepository
+import java.util.Date
 
 class TripRepositoryImpl(private val tripStorage: TripStorage, val changeStatusRequestDao: ChangeStatusRequestDao) : TripRepository {
     override suspend fun getTrip(id: Long): TripDetails {
@@ -51,7 +52,7 @@ class TripRepositoryImpl(private val tripStorage: TripStorage, val changeStatusR
         val userId = 1L
         var locationRoom: LocationRequestRoom? = null;
         if(gpsCoordinates != null){
-            locationRoom = LocationRequestRoom(null, gpsCoordinates.latitude, gpsCoordinates.longitude)
+            locationRoom = LocationRequestRoom(null, gpsCoordinates.latitude, gpsCoordinates.longitude, newStatus, Date())
         }
         val changeStatusRequestRoom = ChangeStatusRequestRoom(null, userId, pointId, locationRoom, newStatus )
         changeStatusRequestDao.insert(changeStatusRequestRoom)
@@ -68,9 +69,9 @@ class TripRepositoryImpl(private val tripStorage: TripStorage, val changeStatusR
     }
 
 
-    override suspend fun getTripGpsData(tripId: Long): List<TripGps> {
+    override suspend fun getTripGpsData(tripId: Long): List<Location> {
         val response = tripStorage.getTripGpsData(tripId)
-        return response.gpsData.map { TripGps(it.type, it.latitude, it.longitude, it.sendDate) }
+        return response.gpsData.map { Location(it.id, it.latitude, it.longitude, it.type, it.fetchDate) }
     }
 }
 

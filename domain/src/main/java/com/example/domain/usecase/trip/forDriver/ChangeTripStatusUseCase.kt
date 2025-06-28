@@ -1,14 +1,15 @@
-package com.example.dispidition.presentation.viewmodel.trip.forDriver
+package com.example.domain.usecase.trip.forDriver
 
-import android.location.Location
+
 import com.example.domain.repository.LocationRepository
 import com.example.domain.repository.TripRepository
 
 class ChangeTripStatusUseCase(
     private val tripRepository: TripRepository,
-    locationRepository: LocationRepository
+    private val locationRepository: LocationRepository
 ) {
-    suspend fun execute(id: Long, gpsCoordinates: Location?, newStatus: String): Boolean {
+    suspend fun execute(id: Long, newStatus: String): Boolean {
+        val gpsCoordinates = locationRepository.defineLocation()
         try {
             tripRepository.changePointStatus(id, gpsCoordinates, newStatus)
             return true;

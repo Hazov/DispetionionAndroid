@@ -50,9 +50,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import android.Manifest
 import android.annotation.SuppressLint
-import com.example.dispidition.presentation.screens.trip.TripGpsScreen
-import com.google.android.gms.location.LocationServices
-import com.google.firebase.messaging.FirebaseMessaging
+import com.example.dispidition.presentation.screens.trip.TripGPSReportScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -96,24 +94,11 @@ class MainActivity : ComponentActivity() {
     lateinit var loginScreen: LoginScreen
 
     @Inject
-    lateinit var tripGpsScreen: TripGpsScreen
+    lateinit var tripGpsReportScreen: TripGPSReportScreen
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         requestGpsPermissions()
-
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            if (location != null) {
-                val lat = location.latitude
-                val lon = location.longitude
-            }
-        }.addOnFailureListener {
-
-        }
-
-
-
         
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -178,7 +163,7 @@ class MainActivity : ComponentActivity() {
                                 arguments = listOf(navArgument("tripId") { type = NavType.LongType })
                             ) { stackEntry ->
                                 val tripId = stackEntry.arguments?.getLong("tripId")
-                                tripGpsScreen.Init(tripId)
+                                tripGpsReportScreen.Init(tripId)
                             }
 
                             composable("persons") {

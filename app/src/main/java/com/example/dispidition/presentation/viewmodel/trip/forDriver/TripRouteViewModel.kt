@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoute
 import com.example.domain.model.trip.forDriver.tripRoute.TripRoutePoint
 import com.example.domain.usecase.gps.DefineGpsUseCase
+import com.example.domain.usecase.trip.forDriver.ChangeTripStatusUseCase
+import com.example.domain.usecase.trip.forDriver.DefineNewTripStatusUseCase
 import com.example.domain.usecase.trip.forDriver.GetTripRouteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -21,7 +23,7 @@ class TripRouteViewModel @Inject constructor(
     private val defineNewTripStatusUseCase: DefineNewTripStatusUseCase,
     private val changeTripStatusUseCase: ChangeTripStatusUseCase,
 
-) : ViewModel() {
+    ) : ViewModel() {
     val isChangeStatusDlg: MutableState<Boolean> = mutableStateOf(false)
 
     var tripRoute: TripRoute? = null;
@@ -50,9 +52,8 @@ class TripRouteViewModel @Inject constructor(
 
         }
         viewModelScope.launch(exceptionHandler) {
-            val newStatus = defineNewTripStatusUseCase.execute(currentTripPoint)
-            val gpsCoordinates = defineGpsUseCase.execute()
-            changeTripStatusUseCase.execute(currentTripPoint.value!!, gpsCoordinates, newStatus);
+            val newStatus = defineNewTripStatusUseCase.execute(currentTripPoint.value!!)
+            changeTripStatusUseCase.execute(currentTripPoint.value!!.id, newStatus);
             changeStatusInUI(newStatus)
 
 //            fetchRoute()

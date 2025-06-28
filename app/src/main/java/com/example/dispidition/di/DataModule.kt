@@ -1,9 +1,13 @@
 package com.example.dispidition.di
 
 import android.content.Context
+import androidx.room.Room
 import com.example.data.auth.AuthInterceptor
 import com.example.data.auth.PermissionsManager
 import com.example.data.auth.TokenManager
+import com.example.data.db.AppDatabase
+import com.example.data.db.dao.ChangeStatusRequestDao
+import com.example.data.db.dao.LocationDao
 import com.example.data.repo.AuthRepositoryImpl
 import com.example.data.repo.FirebaseRepositoryImpl
 import com.example.data.repo.PersonRepositoryImpl
@@ -39,17 +43,30 @@ import javax.inject.Singleton
 class DataModule {
 
     @Provides
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(
+            context.applicationContext,
+            AppDatabase::class.java,
+            "app_database"
+        ).fallbackToDestructiveMigration().build()
+
+    // Теперь добавляем новый метод для инъекции LocationDao
+    @Provides
+    fun provideLocationDao(appDatabase: AppDatabase): LocationDao = appDatabase.locationDao()
+
+    @Provides
+    fun provideChangeStatusRequestDao(appDatabase: AppDatabase): ChangeStatusRequestDao = appDatabase.changeStatusRequestDao()
+
+    @Provides
     @Singleton
     fun provideTruckRepository(truckStorage: TruckStorage): TruckRepository {
         return TruckRepositoryImpl(truckStorage)
     }
 
-
-
     @Provides
     @Singleton
-    fun provideTripRepository(tripStorage: TripStorage): TripRepository {
-        return TripRepositoryImpl(tripStorage)
+    fun provideTripRepository(tripStorage: TripStorage, changeStatusRequestDao: ChangeStatusRequestDao): TripRepository {
+        return TripRepositoryImpl(tripStorage, changeStatusRequestDao)
     }
 
     @Singleton
@@ -133,4 +150,6 @@ class DataModule {
     fun provideServerTruckStorage(retrofit: Retrofit): TruckStorage {
         return retrofit.create(ServerTruckStorage::class.java)
     }
+
+
 }

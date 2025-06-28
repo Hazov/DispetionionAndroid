@@ -16,7 +16,7 @@ import com.example.dispidition.presentation.screens.truck.CreateTruckScreen
 import com.example.dispidition.presentation.screens.truck.TruckDetailsScreen
 import com.example.dispidition.presentation.screens.truck.TrucksRegistryScreen
 import com.example.dispidition.app.global.GlobalSettings
-import com.example.dispidition.presentation.screens.trip.TripGpsScreen
+import com.example.dispidition.presentation.screens.trip.TripGPSReportScreen
 import com.example.ui.auth.AuthUI
 import com.example.ui.autocomplete.AutoComplete
 import com.example.ui.details.DetailsUI
@@ -196,11 +196,11 @@ class UIModule {
 
     @Provides
     @Singleton
-    fun providesTripGpsScreen(
+    fun providesTripGPSReportScreen(
         detailsUI: DetailsUI,
         globalSettings: GlobalSettings,
         navController: NavHostController
-    ): TripGpsScreen {
-        return TripGpsScreen(detailsUI, globalSettings, navController)
+    ): TripGPSReportScreen {
+        return TripGPSReportScreen(detailsUI, globalSettings, navController)
     }
 }

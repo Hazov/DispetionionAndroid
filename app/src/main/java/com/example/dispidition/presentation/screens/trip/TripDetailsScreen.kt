@@ -148,7 +148,7 @@ class TripDetailsScreen(
                                         Text(point.address.house)
                                     }
 
-                                    detailsUI.DetailsPairRow(""){
+                                    detailsUI.DetailsPairRow("Адрес"){
                                         Row {
                                             Button(onClick = {
                                                 var address =
@@ -173,16 +173,22 @@ class TripDetailsScreen(
                                             )
                                         }
                                     }
+                                    detailsUI.DetailsPairRow("GPS отчет"){
+                                        Row {
+                                            Button(onClick = {
+                                            }) {
+
+                                            }
+                                        }
+                                    }
                                 }
                             }
-
                         }
                     }
 
                 }
             }
         }
-
     }
 
 
@@ -214,21 +220,6 @@ class TripDetailsScreen(
                 Text(fontWeight = FontWeight.Bold, text = header)
             }
             content()
-        }
-    }
-
-
-    @Composable
-    fun Circle(size: Int, color: Color) {
-        Canvas(
-            Modifier
-                .size(size.dp)
-                .background(Color.Transparent)) {
-            drawCircle(
-                color = color,
-                center = center,
-                radius = size.dp.toPx()
-            )
         }
     }
 

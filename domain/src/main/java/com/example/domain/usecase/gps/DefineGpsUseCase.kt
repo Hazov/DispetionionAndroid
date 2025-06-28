@@ -5,7 +5,7 @@ import com.example.domain.repository.LocationRepository
 
 
 class DefineGpsUseCase constructor(private val locationRepository: LocationRepository) {
-     fun execute(): android.location.Location? {
+     suspend fun execute(): Location? {
         return locationRepository.defineLocation();
     }
 

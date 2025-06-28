@@ -46,12 +46,14 @@ android {
 }
 
 dependencies{
+    implementation("io.coil-kt.coil3:coil-compose:3.2.0")
     implementation ("androidx.work:work-runtime-ktx:2.10.0")
     implementation("com.google.firebase:firebase-messaging:24.1.1")
     implementation("com.google.firebase:firebase-bom:33.14.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0") // Retrofit
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0") // конвертер Gson
     implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation(libs.androidx.room.runtime)
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
     kapt ("androidx.room:room-compiler:2.4.3")
     implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")

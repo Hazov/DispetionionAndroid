@@ -29,7 +29,7 @@ interface ServerTripStorage : TripStorage {
     override suspend fun getTripRouteForDriver(): TripRouteResponse
 
     @PUT("/api/v1/driver/trip/change_point_status/{pointId}")
-    override suspend fun changePointStatus(@Path("pointId") pointId: Long, @Body changeStatusRequest: ChangeStatusRequest): ChangePointStatusResponse;
+    suspend fun changePointStatus(@Path("pointId") pointId: Long, @Body changeStatusRequest: ChangeStatusRequest): ChangePointStatusResponse;
 
     @GET("/api/v1/trip/{id}/gps")
     override suspend fun getTripGpsData(@Path("id") id : Long): TripGpsDataResponse

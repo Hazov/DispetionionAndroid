@@ -22,6 +22,8 @@ import com.example.domain.usecase.trip.get_trip.GetTripUseCase
 import com.example.domain.usecase.trip.get_trips.GetTripsUseCase
 import com.example.domain.usecase.trip.autocomplete.GetDriversAutoCompleteUseCase
 import com.example.domain.usecase.trip.autocomplete.GetTrucksAutoCompleteUseCase
+import com.example.domain.usecase.trip.forDriver.ChangeTripStatusUseCase
+import com.example.domain.usecase.trip.forDriver.DefineNewTripStatusUseCase
 import com.example.domain.usecase.trip.forDriver.GetTripRouteUseCase
 import com.example.domain.usecase.truck.CreateTruckUseCase
 import com.example.domain.usecase.truck.GetTruckUseCase
@@ -86,6 +88,20 @@ class DomainModule {
     fun providesGetTripGpsUseCase(tripRepository: TripRepository): GetTripGpsUseCase {
         return GetTripGpsUseCase(tripRepository)
     }
+
+    @Provides
+    fun providesDefineNewTripStatusUseCase(): DefineNewTripStatusUseCase {
+        return DefineNewTripStatusUseCase()
+    }
+
+    @Provides
+    fun providesChangeTripStatusUseCase(tripRepository: TripRepository, locationRepository: LocationRepository): ChangeTripStatusUseCase {
+        return ChangeTripStatusUseCase(tripRepository, locationRepository)
+    }
+
+
+
+
 
 
 
